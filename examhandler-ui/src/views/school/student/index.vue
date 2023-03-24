@@ -25,6 +25,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="课程名称" prop="studentClassname">
+        <el-input
+          v-model="queryParams.studentClassname"
+          placeholder="请输入课程名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="教师" prop="studentTeacher">
         <el-input
           v-model="queryParams.studentTeacher"
@@ -151,16 +159,37 @@
 
     <el-table v-loading="loading" :data="studentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="学号" align="center" prop="studentId" />
-      <el-table-column label="姓名" align="center" prop="studentName" />
-      <el-table-column label="专业名称" align="center" prop="studentMajor" />
-      <el-table-column label="教师" align="center" prop="studentTeacher" />
-      <el-table-column label="学科类别" align="center" prop="studentCategory" />
-      <el-table-column label="校区" align="center" prop="studentCampus" />
-      <el-table-column label="星期几" align="center" prop="studentDay" />
-      <el-table-column label="第几节" align="center" prop="studentSession" />
-      <el-table-column label="上机课地点" align="center" prop="studentClassroom" />
-      <el-table-column label="状态(0:正常)" align="center" prop="status"/>
+      <el-table-column label="学号" align="center" prop="studentId"/>
+      <el-table-column label="姓名" align="center" prop="studentName"/>
+      <el-table-column label="专业名称" align="center" prop="studentMajor"/>
+      <el-table-column label="课程名称" align="center" prop="studentClassname"/>
+      <el-table-column label="教师" align="center" prop="studentTeacher"/>
+      <el-table-column label="学科类别" align="center" prop="studentCategory"/>
+      <el-table-column label="校区" align="center" prop="studentCampus"/>
+      <el-table-column label="星期几" align="center" prop="studentDay"/>
+      <el-table-column label="第几节" align="center" prop="studentSession"/>
+      <el-table-column label="上机课地点" align="center" prop="studentClassroom"/>
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-tag
+            v-if="scope.row.status === '0'"
+            type="success"
+            @click="updateStatus(scope.row)"
+            style="cursor: pointer;"
+          >
+            正常
+          </el-tag>
+          <el-tag
+            v-else
+            type="danger"
+            @click="updateStatus(scope.row)"
+            style="cursor: pointer;"
+          >
+            停用
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -169,7 +198,8 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['school:student:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -191,24 +221,27 @@
 
     <!-- 添加或修改学生信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="学号" prop="studentId">
-          <el-input v-model="form.studentId" placeholder="请输入学号" />
+          <el-input v-model="form.studentId" placeholder="请输入学号"/>
         </el-form-item>
         <el-form-item label="姓名" prop="studentName">
-          <el-input v-model="form.studentName" placeholder="请输入姓名" />
+          <el-input v-model="form.studentName" placeholder="请输入姓名"/>
         </el-form-item>
         <el-form-item label="专业名称" prop="studentMajor">
-          <el-input v-model="form.studentMajor" placeholder="请输入专业名称" />
+          <el-input v-model="form.studentMajor" placeholder="请输入专业名称"/>
+        </el-form-item>
+        <el-form-item label="课程名称" prop="studentClassname">
+          <el-input v-model="form.studentClassname" placeholder="请输入课程名称"/>
         </el-form-item>
         <el-form-item label="教师" prop="studentTeacher">
-          <el-input v-model="form.studentTeacher" placeholder="请输入教师" />
+          <el-input v-model="form.studentTeacher" placeholder="请输入教师"/>
         </el-form-item>
         <el-form-item label="学科类别" prop="studentCategory">
-          <el-input v-model="form.studentCategory" placeholder="请输入学科类别" />
+          <el-input v-model="form.studentCategory" placeholder="请输入学科类别"/>
         </el-form-item>
         <el-form-item label="校区" prop="studentCampus">
-          <el-input v-model="form.studentCampus" placeholder="请输入校区" />
+          <el-input v-model="form.studentCampus" placeholder="请输入校区"/>
         </el-form-item>
         <el-form-item label="星期几" prop="studentDay">
           <el-input v-model="form.studentDay" placeholder="请输入星期几" />
@@ -264,6 +297,7 @@
 <script>
   import {listStudent, getStudent, delStudent, addStudent, updateStudent} from "@/api/school/student";
   import {getToken} from "@/utils/auth";
+  import request from "@/utils/request";
 
 export default {
   name: "Student",
@@ -323,22 +357,25 @@ export default {
       // 表单校验
       rules: {
         studentId: [
-          { required: true, message: "学号不能为空", trigger: "blur" }
+          {required: true, message: "学号不能为空", trigger: "blur"}
         ],
         studentName: [
-          { required: true, message: "姓名不能为空", trigger: "blur" }
+          {required: true, message: "姓名不能为空", trigger: "blur"}
         ],
         studentMajor: [
-          { required: true, message: "专业名称不能为空", trigger: "blur" }
+          {required: true, message: "专业名称不能为空", trigger: "blur"}
+        ],
+        studentClassname: [
+          {required: true, message: "课程名称不能为空", trigger: "blur"}
         ],
         studentTeacher: [
-          { required: true, message: "教师不能为空", trigger: "blur" }
+          {required: true, message: "教师不能为空", trigger: "blur"}
         ],
         studentCategory: [
-          { required: true, message: "学科类别不能为空", trigger: "blur" }
+          {required: true, message: "学科类别不能为空", trigger: "blur"}
         ],
         studentDay: [
-          { required: true, message: "星期几不能为空", trigger: "blur" }
+          {required: true, message: "星期几不能为空", trigger: "blur"}
         ],
         studentSession: [
           { required: true, message: "第几节不能为空", trigger: "blur" }
@@ -416,7 +453,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.studentId != null) {
+          if (this.form.status != null) {
             updateStudent(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -432,10 +469,22 @@ export default {
         }
       });
     },
+    /** 修改状态 */
+    updateStatus(row) {
+      const studentId = row.studentId || this.ids
+      const status = row.status === '0' ? 1 : 0
+      return request({
+        url: '/school/student/status/' + studentId + '/' + status,
+        method: 'put'
+      }).then(response => {
+        this.$modal.msgSuccess("修改成功");
+        this.getList();
+      });
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const studentIds = row.studentId || this.ids;
-      this.$modal.confirm('是否确认删除学生信息编号为"' + studentIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除学生信息编号为"' + studentIds + '"的数据项？').then(function () {
         return delStudent(studentIds);
       }).then(() => {
         this.getList();

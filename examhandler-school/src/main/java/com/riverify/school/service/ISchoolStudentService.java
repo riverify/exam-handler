@@ -2,6 +2,7 @@ package com.riverify.school.service;
 
 import java.util.List;
 import com.riverify.school.domain.SchoolStudent;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 学生信息Service接口
@@ -69,4 +70,9 @@ public interface ISchoolStudentService
 
 
     public String countSchoolStudent();
+
+    /**
+     *
+     */
+    public int updateSchoolStudentStatus(String studentId, String status);
 }

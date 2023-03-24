@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.riverify.school.mapper.SchoolClassroomMapper">
+
+    <resultMap type="SchoolClassroom" id="SchoolClassroomResult">
+        <result property="classroomNumber" column="classroom_number"/>
+        <result property="classroomCampus" column="classroom_campus"/>
+        <result property="classroomSize" column="classroom_size"/>
+        <result property="classroomStatus" column="classroom_status"/>
+    </resultMap>
+
+    <sql id="selectSchoolClassroomVo">
+        select classroom_number, classroom_campus, classroom_size, classroom_status
+        from school_classroom
+    </sql>
+
+    <select id="selectSchoolClassroomList" parameterType="SchoolClassroom" resultMap="SchoolClassroomResult">
+        <include refid="selectSchoolClassroomVo"/>
+        <where>
+            <if test="classroomNumber != null  and classroomNumber != ''">and classroom_number like concat('%',
+                #{classroomNumber}, '%')
+            </if>
+            <if test="classroomCampus != null  and classroomCampus != ''">and classroom_campus = #{classroomCampus}</if>
+            <if test="classroomSize != null ">and classroom_size &gt;= #{classroomSize}</if>
+            <if test="classroomStatus != null ">and classroom_status = #{classroomStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectSchoolClassroomByClassroomNumber" parameterType="String" resultMap="SchoolClassroomResult">
+        <include refid="selectSchoolClassroomVo"/>
+        where classroom_number = #{classroomNumber}
+    </select>
+
+    <insert id="insertSchoolClassroom" parameterType="SchoolClassroom">
+        insert into school_classroom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="classroomNumber != null and classroomNumber != ''">classroom_number,</if>
+            <if test="classroomCampus != null and classroomCampus != ''">classroom_campus,</if>
+            <if test="classroomSize != null">classroom_size,</if>
+            <if test="classroomStatus != null">classroom_status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="classroomNumber != null and classroomNumber != ''">#{classroomNumber},</if>
+            <if test="classroomCampus != null and classroomCampus != ''">#{classroomCampus},</if>
+            <if test="classroomSize != null">#{classroomSize},</if>
+            <if test="classroomStatus != null">#{classroomStatus},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSchoolClassroom" parameterType="SchoolClassroom">
+        update school_classroom
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="classroomCampus != null and classroomCampus != ''">classroom_campus = #{classroomCampus},</if>
+            <if test="classroomSize != null">classroom_size = #{classroomSize},</if>
+            <if test="classroomStatus != null">classroom_status = #{classroomStatus},</if>
+        </trim>
+        where classroom_number = #{classroomNumber}
+    </update>
+
+    <delete id="deleteSchoolClassroomByClassroomNumber" parameterType="String">
+        delete
+        from school_classroom
+        where classroom_number = #{classroomNumber}
+    </delete>
+
+    <delete id="deleteSchoolClassroomByClassroomNumbers" parameterType="String">
+        delete from school_classroom where classroom_number in
+        <foreach item="classroomNumber" collection="array" open="(" separator="," close=")">
+            #{classroomNumber}
+        </foreach>
+    </delete>
+</mapper>

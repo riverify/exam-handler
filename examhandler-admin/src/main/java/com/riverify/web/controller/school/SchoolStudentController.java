@@ -124,4 +124,13 @@ public class SchoolStudentController extends BaseController
     public AjaxResult count() {
         return success(schoolStudentService.countSchoolStudent());
     }
+
+    /**
+     * 更新学生状态
+     */
+    @PutMapping("/status/{studentId}/{status}")
+    public AjaxResult status(@PathVariable String studentId, @PathVariable String status) {
+        schoolStudentService.updateSchoolStudentStatus(studentId, status);
+        return null;
+    }
 }

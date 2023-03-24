@@ -164,4 +164,19 @@ public class SchoolStudentServiceImpl implements ISchoolStudentService
         int studentCount = schoolStudentMapper.countSchoolStudent();
         return "学生总数为：" + studentCount + "人";
     }
+
+    /**
+     * 修改学生状态，如果是正常状态则修改为禁用，如果是禁用状态则修改为正常
+     *
+     * @param studentId 学生id
+     * @param status    需要修改成的状态
+     * @return 结果
+     */
+    @Override
+    public int updateSchoolStudentStatus(String studentId, String status) {
+        SchoolStudent student = new SchoolStudent();
+        student.setStudentId(studentId);
+        student.setStatus(status);
+        return schoolStudentMapper.updateSchoolStudent(student);
+    }
 }

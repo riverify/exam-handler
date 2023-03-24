@@ -50,3 +50,12 @@ export function countStudent() {
     method: 'get'
   })
 }
+
+// 修改学生信状态
+export function updateStudentStatus(studentId, status) {
+  alert("defined dude")
+  return request({
+    url: '/school/student/status/' + studentId + '/' + status,
+    method: 'put'
+  })
+}
