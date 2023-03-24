@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.riverify.school.mapper.SchoolStudentMapper;
 import com.riverify.school.domain.SchoolStudent;
 import com.riverify.school.service.ISchoolStudentService;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 学生信息Service业务层处理
@@ -17,6 +19,7 @@ import com.riverify.school.service.ISchoolStudentService;
  * @date 2023-03-24
  */
 @Service
+@EnableTransactionManagement
 public class SchoolStudentServiceImpl implements ISchoolStudentService 
 {
     @Autowired
@@ -101,6 +104,7 @@ public class SchoolStudentServiceImpl implements ISchoolStudentService
      * @param operName          操作用户
      * @return 结果
      */
+    @Transactional
     @Override
     public String importSchoolStudent(List<SchoolStudent> schoolStudentList, boolean updateSupport, String operName) {
         if (StringUtils.isNull(schoolStudentList) || schoolStudentList.size() == 0) {
