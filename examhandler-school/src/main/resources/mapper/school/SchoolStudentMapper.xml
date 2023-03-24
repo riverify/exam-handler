@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.riverify.school.mapper.SchoolStudentMapper">
+    
+    <resultMap type="SchoolStudent" id="SchoolStudentResult">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="studentMajor"    column="student_major"    />
+        <result property="studentTeacher"    column="student_teacher"    />
+        <result property="studentCategory"    column="student_category"    />
+        <result property="studentCampus"    column="student_campus"    />
+        <result property="studentDay"    column="student_day"    />
+        <result property="studentSession"    column="student_session"    />
+        <result property="studentClassroom"    column="student_classroom"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectSchoolStudentVo">
+        select student_id, student_name, student_major, student_teacher, student_category, student_campus, student_day, student_session, student_classroom, status from school_student
+    </sql>
+
+    <select id="selectSchoolStudentList" parameterType="SchoolStudent" resultMap="SchoolStudentResult">
+        <include refid="selectSchoolStudentVo"/>
+        <where>  
+            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="studentMajor != null  and studentMajor != ''"> and student_major = #{studentMajor}</if>
+            <if test="studentTeacher != null  and studentTeacher != ''"> and student_teacher = #{studentTeacher}</if>
+            <if test="studentCategory != null  and studentCategory != ''"> and student_category = #{studentCategory}</if>
+            <if test="studentCampus != null "> and student_campus = #{studentCampus}</if>
+            <if test="studentDay != null "> and student_day = #{studentDay}</if>
+            <if test="studentSession != null "> and student_session = #{studentSession}</if>
+            <if test="studentClassroom != null  and studentClassroom != ''"> and student_classroom = #{studentClassroom}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSchoolStudentByStudentId" parameterType="String" resultMap="SchoolStudentResult">
+        <include refid="selectSchoolStudentVo"/>
+        where student_id = #{studentId}
+    </select>
+        
+    <insert id="insertSchoolStudent" parameterType="SchoolStudent">
+        insert into school_student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id,</if>
+            <if test="studentName != null and studentName != ''">student_name,</if>
+            <if test="studentMajor != null and studentMajor != ''">student_major,</if>
+            <if test="studentTeacher != null and studentTeacher != ''">student_teacher,</if>
+            <if test="studentCategory != null and studentCategory != ''">student_category,</if>
+            <if test="studentCampus != null">student_campus,</if>
+            <if test="studentDay != null">student_day,</if>
+            <if test="studentSession != null">student_session,</if>
+            <if test="studentClassroom != null">student_classroom,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">#{studentId},</if>
+            <if test="studentName != null and studentName != ''">#{studentName},</if>
+            <if test="studentMajor != null and studentMajor != ''">#{studentMajor},</if>
+            <if test="studentTeacher != null and studentTeacher != ''">#{studentTeacher},</if>
+            <if test="studentCategory != null and studentCategory != ''">#{studentCategory},</if>
+            <if test="studentCampus != null">#{studentCampus},</if>
+            <if test="studentDay != null">#{studentDay},</if>
+            <if test="studentSession != null">#{studentSession},</if>
+            <if test="studentClassroom != null">#{studentClassroom},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolStudent" parameterType="SchoolStudent">
+        update school_student
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="studentMajor != null and studentMajor != ''">student_major = #{studentMajor},</if>
+            <if test="studentTeacher != null and studentTeacher != ''">student_teacher = #{studentTeacher},</if>
+            <if test="studentCategory != null and studentCategory != ''">student_category = #{studentCategory},</if>
+            <if test="studentCampus != null">student_campus = #{studentCampus},</if>
+            <if test="studentDay != null">student_day = #{studentDay},</if>
+            <if test="studentSession != null">student_session = #{studentSession},</if>
+            <if test="studentClassroom != null">student_classroom = #{studentClassroom},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteSchoolStudentByStudentId" parameterType="String">
+        delete from school_student where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteSchoolStudentByStudentIds" parameterType="String">
+        delete from school_student where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+</mapper>
