@@ -53,9 +53,18 @@ public interface ISchoolStudentService
 
     /**
      * 删除学生信息信息
-     * 
+     *
      * @param studentId 学生信息主键
      * @return 结果
      */
     public int deleteSchoolStudentByStudentId(String studentId);
+
+    /**
+     * 导入学生信息
+     *
+     * @param schoolStudentList 学生信息列表
+     * @return 结果
+     */
+    public String importSchoolStudent(List<SchoolStudent> schoolStudentList, boolean updateSupport, String operName);
+
 }

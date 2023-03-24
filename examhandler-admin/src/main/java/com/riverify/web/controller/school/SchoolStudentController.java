@@ -2,6 +2,8 @@ package com.riverify.web.controller.school;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.riverify.common.core.domain.entity.SysUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import com.riverify.school.domain.SchoolStudent;
 import com.riverify.school.service.ISchoolStudentService;
 import com.riverify.common.utils.poi.ExcelUtil;
 import com.riverify.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 学生信息Controller
@@ -52,11 +55,24 @@ public class SchoolStudentController extends BaseController
     @PreAuthorize("@ss.hasPermi('school:student:export')")
     @Log(title = "学生信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SchoolStudent schoolStudent)
-    {
+    public void export(HttpServletResponse response, SchoolStudent schoolStudent) {
         List<SchoolStudent> list = schoolStudentService.selectSchoolStudentList(schoolStudent);
         ExcelUtil<SchoolStudent> util = new ExcelUtil<SchoolStudent>(SchoolStudent.class);
         util.exportExcel(response, list, "学生信息数据");
+    }
+
+    /**
+     * 导入学生信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:user:import')")
+    @Log(title = "学生信息", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
+        ExcelUtil<SchoolStudent> util = new ExcelUtil<SchoolStudent>(SchoolStudent.class);
+        List<SchoolStudent> userList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = schoolStudentService.importSchoolStudent(userList, updateSupport, operName);
+        return success(message);
     }
 
     /**
@@ -64,8 +80,7 @@ public class SchoolStudentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('school:student:query')")
     @GetMapping(value = "/{studentId}")
-    public AjaxResult getInfo(@PathVariable("studentId") String studentId)
-    {
+    public AjaxResult getInfo(@PathVariable("studentId") String studentId) {
         return success(schoolStudentService.selectSchoolStudentByStudentId(studentId));
     }
 
