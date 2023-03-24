@@ -111,9 +111,17 @@ public class SchoolStudentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('school:student:remove')")
     @Log(title = "学生信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{studentIds}")
-    public AjaxResult remove(@PathVariable String[] studentIds)
-    {
+    @DeleteMapping("/{studentIds}")
+    public AjaxResult remove(@PathVariable String[] studentIds) {
         return toAjax(schoolStudentService.deleteSchoolStudentByStudentIds(studentIds));
+    }
+
+    /**
+     * 统计学生信息
+     */
+    @PreAuthorize("@ss.hasPermi('school:student:count')")
+    @GetMapping("/count")
+    public AjaxResult count() {
+        return success(schoolStudentService.countSchoolStudent());
     }
 }

@@ -53,9 +53,11 @@ public interface SchoolStudentMapper
 
     /**
      * 批量删除学生信息
-     * 
+     *
      * @param studentIds 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSchoolStudentByStudentIds(String[] studentIds);
+
+    public int countSchoolStudent();
 }

@@ -67,4 +67,6 @@ public interface ISchoolStudentService
      */
     public String importSchoolStudent(List<SchoolStudent> schoolStudentList, boolean updateSupport, String operName);
 
+
+    public String countSchoolStudent();
 }

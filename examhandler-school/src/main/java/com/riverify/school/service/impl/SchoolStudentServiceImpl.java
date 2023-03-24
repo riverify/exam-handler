@@ -118,7 +118,7 @@ public class SchoolStudentServiceImpl implements ISchoolStudentService
         for (SchoolStudent student : schoolStudentList) {
             try {
                 // 默认状态为正常
-                if (StringUtils.isNull(student.getStatus())) {
+                if (StringUtils.isNull(student.getStatus()) || "".equals(student.getStatus())) {
                     student.setStatus("0");
                 }
                 // 验证是否存在这个学生
@@ -146,11 +146,22 @@ public class SchoolStudentServiceImpl implements ISchoolStudentService
         }
 
         if (failureNum > 0) {
-            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确或存在重复，错误如下：");
+            failureMsg.insert(0, "很抱歉，导入失败！原因：共 " + failureNum + " 条数据格式不正确或存在重复，错误如下：");
             throw new ServiceException(failureMsg.toString());
         } else {
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
         }
         return successMsg.toString();
+    }
+
+    /**
+     * 查询学生个数
+     *
+     * @return 学生个数等信息
+     */
+    @Override
+    public String countSchoolStudent() {
+        int studentCount = schoolStudentMapper.countSchoolStudent();
+        return "学生总数为：" + studentCount + "人";
     }
 }

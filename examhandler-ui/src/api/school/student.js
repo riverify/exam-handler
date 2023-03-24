@@ -42,3 +42,11 @@ export function delStudent(studentId) {
     method: 'delete'
   })
 }
+
+// 统计学生信息
+export function countStudent() {
+  return request({
+    url: '/school/student/count',
+    method: 'get'
+  })
+}

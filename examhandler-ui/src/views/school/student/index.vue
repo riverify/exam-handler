@@ -135,6 +135,17 @@
         >导出
         </el-button>
       </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="success"-->
+      <!--          plain-->
+      <!--          icon="el-icon-pie-chart"-->
+      <!--          size="mini"-->
+      <!--          @click="handleCount"-->
+      <!--          v-hasPermi="['school:student:export']"-->
+      <!--        >统计-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -443,6 +454,15 @@ export default {
       this.upload.title = "学生导入";
       this.upload.open = true;
     },
+    // /** 统计总学生人数 */
+    // handleCount(response) {
+    //   this.$modal.confirm("是否需要统计总学生人数？").then(() => {
+    //     countStudent().then(response => {
+    //       this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "统计结果", {dangerouslyUseHTMLString: true});
+    //     });
+    //   }).catch(() => {
+    //   });
+    // },
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;

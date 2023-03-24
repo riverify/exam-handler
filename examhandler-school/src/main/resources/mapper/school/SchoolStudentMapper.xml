@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.riverify.school.mapper.SchoolStudentMapper">
-    
+
     <resultMap type="SchoolStudent" id="SchoolStudentResult">
         <result property="studentId"    column="student_id"    />
         <result property="studentName"    column="student_name"    />
@@ -23,25 +23,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSchoolStudentList" parameterType="SchoolStudent" resultMap="SchoolStudentResult">
         <include refid="selectSchoolStudentVo"/>
-        <where>  
-            <if test="studentId != null  and studentId != ''"> and student_id = #{studentId}</if>
-            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
-            <if test="studentMajor != null  and studentMajor != ''"> and student_major = #{studentMajor}</if>
-            <if test="studentTeacher != null  and studentTeacher != ''"> and student_teacher = #{studentTeacher}</if>
-            <if test="studentCategory != null  and studentCategory != ''"> and student_category = #{studentCategory}</if>
-            <if test="studentCampus != null "> and student_campus = #{studentCampus}</if>
-            <if test="studentDay != null "> and student_day = #{studentDay}</if>
-            <if test="studentSession != null "> and student_session = #{studentSession}</if>
-            <if test="studentClassroom != null  and studentClassroom != ''"> and student_classroom = #{studentClassroom}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
+        <where>
+            <if test="studentId != null  and studentId != ''">and student_id = #{studentId}</if>
+            <if test="studentName != null  and studentName != ''">and student_name like concat('%', #{studentName},
+                '%')
+            </if>
+            <if test="studentMajor != null  and studentMajor != ''">and student_major like concat('%', #{studentMajor},
+                '%')
+            </if>
+            <if test="studentTeacher != null  and studentTeacher != ''">and student_teacher like concat('%',
+                #{studentTeacher}, '%')
+            </if>
+            <if test="studentCategory != null  and studentCategory != ''">and student_category like concat('%',
+                #{studentCategory}, '%')
+            </if>
+            <if test="studentCampus != null ">and student_campus = #{studentCampus}</if>
+            <if test="studentDay != null ">and student_day = #{studentDay}</if>
+            <if test="studentSession != null ">and student_session = #{studentSession}</if>
+            <if test="studentClassroom != null  and studentClassroom != ''">and student_classroom like concat('%',
+                #{studentClassroom}, '%')
+            </if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
         </where>
     </select>
-    
+
     <select id="selectSchoolStudentByStudentId" parameterType="String" resultMap="SchoolStudentResult">
         <include refid="selectSchoolStudentVo"/>
         where student_id = #{studentId}
     </select>
-        
+
+    <!-- 统计总学生数 -->
+    <select id="countSchoolStudent" resultType="int">
+        select count(*)
+        from school_student
+    </select>
+
     <insert id="insertSchoolStudent" parameterType="SchoolStudent">
         insert into school_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -55,7 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="studentSession != null">student_session,</if>
             <if test="studentClassroom != null">student_classroom,</if>
             <if test="status != null">status,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="studentId != null and studentId != ''">#{studentId},</if>
             <if test="studentName != null and studentName != ''">#{studentName},</if>
@@ -67,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="studentSession != null">#{studentSession},</if>
             <if test="studentClassroom != null">#{studentClassroom},</if>
             <if test="status != null">#{status},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSchoolStudent" parameterType="SchoolStudent">
@@ -91,7 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSchoolStudentByStudentIds" parameterType="String">
-        delete from school_student where student_id in 
+        delete from school_student where student_id in
         <foreach item="studentId" collection="array" open="(" separator="," close=")">
             #{studentId}
         </foreach>
