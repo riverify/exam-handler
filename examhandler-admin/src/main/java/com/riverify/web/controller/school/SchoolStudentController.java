@@ -130,7 +130,6 @@ public class SchoolStudentController extends BaseController
      */
     @PutMapping("/status/{studentId}/{status}")
     public AjaxResult status(@PathVariable String studentId, @PathVariable String status) {
-        schoolStudentService.updateSchoolStudentStatus(studentId, status);
-        return null;
+        return toAjax(schoolStudentService.updateSchoolStudentStatus(studentId, status));
     }
 }
