@@ -249,7 +249,7 @@
         getClassroom(classroomNumber).then(response => {
           this.form = response.data;
           this.open = true;
-          this.title = "修改考场";
+          this.title = "修改考场信息(不可修改考场号)";
         });
       },
       /** 提交按钮 */
