@@ -222,6 +222,7 @@
     <!-- 添加或修改学生信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <!-- 修改信息时学号为不可修改的 -->
         <el-form-item label="学号" prop="studentId">
           <el-input v-model="form.studentId" placeholder="请输入学号"/>
         </el-form-item>
@@ -413,7 +414,7 @@ export default {
         studentDay: null,
         studentSession: null,
         studentClassroom: null,
-        status: null
+          status: null
       };
       this.resetForm("form");
     },
@@ -446,7 +447,7 @@ export default {
       getStudent(studentId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改学生信息";
+        this.title = "修改学生信息(无法修改学号)";
       });
     },
     /** 提交按钮 */
