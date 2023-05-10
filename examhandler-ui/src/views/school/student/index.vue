@@ -26,9 +26,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="课程名称" prop="studentClassName">
+      <el-form-item label="课程名称" prop="studentClassname">
         <el-input
-          v-model="queryParams.studentClassName"
+          v-model="queryParams.studentClassname"
           placeholder="请输入课程名称"
           clearable
           @keyup.enter.native="handleQuery"
@@ -233,8 +233,8 @@
         <el-form-item label="专业名称" prop="studentMajor">
           <el-input v-model="form.studentMajor" placeholder="请输入专业名称"/>
         </el-form-item>
-        <el-form-item label="课程名称" prop="studentClassName">
-          <el-input v-model="form.studentClassName" placeholder="请输入课程名称"/>
+        <el-form-item label="课程名称" prop="studentClassname">
+          <el-input v-model="form.studentClassname" placeholder="请输入课程名称"/>
         </el-form-item>
         <el-form-item label="教师" prop="studentTeacher">
           <el-input v-model="form.studentTeacher" placeholder="请输入教师"/>
@@ -368,7 +368,7 @@ export default {
         studentMajor: [
           {required: true, message: "专业名称不能为空", trigger: "blur"}
         ],
-        studentClassName: [
+        studentClassname: [
           {required: true, message: "课程名称不能为空", trigger: "blur"}
         ],
         studentTeacher: [
@@ -411,7 +411,7 @@ export default {
         studentId: null,
         studentName: null,
         studentMajor: null,
-        studentClassName: null,
+        studentClassname: null,
         studentTeacher: null,
         studentCategory: null,
         studentCampus: null,

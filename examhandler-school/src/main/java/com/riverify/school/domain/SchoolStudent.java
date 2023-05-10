@@ -31,9 +31,7 @@ public class SchoolStudent extends BaseEntity {
     @Excel(name = "姓名")
     private String studentName;
 
-    /**
-     * 专业名称
-     */
+    /** 专业名称 */
     @Excel(name = "专业名称")
     private String studentMajor;
 
@@ -41,17 +39,13 @@ public class SchoolStudent extends BaseEntity {
      * 课程名称
      */
     @Excel(name = "课程名称")
-    private String studentClassName;
+    private String studentClassname;
 
-    /**
-     * 教师
-     */
+    /** 教师 */
     @Excel(name = "教师")
     private String studentTeacher;
 
-    /**
-     * 学科类别
-     */
+    /** 学科类别 */
     @Excel(name = "学科类别")
     private String studentCategory;
 
@@ -59,11 +53,9 @@ public class SchoolStudent extends BaseEntity {
      * 校区
      */
     @Excel(name = "校区")
-    private Long studentCampus;
+    private String studentCampus;
 
-    /**
-     * 星期几
-     */
+    /** 星期几 */
     @Excel(name = "星期几")
     private Long studentDay;
 
@@ -79,13 +71,11 @@ public class SchoolStudent extends BaseEntity {
     @Excel(name = "上机课地点")
     private String studentClassroom;
 
-
     /**
      * 状态（0正常 1停用）
      */
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     private String status;
-
 
     public void setSid(Long sid) {
         this.sid = sid;
@@ -119,6 +109,14 @@ public class SchoolStudent extends BaseEntity {
         return studentMajor;
     }
 
+    public void setStudentClassname(String studentClassname) {
+        this.studentClassname = studentClassname;
+    }
+
+    public String getStudentClassname() {
+        return studentClassname;
+    }
+
     public void setStudentTeacher(String studentTeacher) {
         this.studentTeacher = studentTeacher;
     }
@@ -135,11 +133,11 @@ public class SchoolStudent extends BaseEntity {
         return studentCategory;
     }
 
-    public void setStudentCampus(Long studentCampus) {
+    public void setStudentCampus(String studentCampus) {
         this.studentCampus = studentCampus;
     }
 
-    public Long getStudentCampus() {
+    public String getStudentCampus() {
         return studentCampus;
     }
 
@@ -175,14 +173,6 @@ public class SchoolStudent extends BaseEntity {
         return status;
     }
 
-    public void setStudentClassname(String studentClassname) {
-        this.studentClassName = studentClassname;
-    }
-
-    public String getStudentClassname() {
-        return studentClassName;
-    }
-
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -190,6 +180,7 @@ public class SchoolStudent extends BaseEntity {
                 .append("studentId", getStudentId())
                 .append("studentName", getStudentName())
                 .append("studentMajor", getStudentMajor())
+                .append("studentClassname", getStudentClassname())
                 .append("studentTeacher", getStudentTeacher())
                 .append("studentCategory", getStudentCategory())
                 .append("studentCampus", getStudentCampus())
@@ -197,7 +188,6 @@ public class SchoolStudent extends BaseEntity {
                 .append("studentSession", getStudentSession())
                 .append("studentClassroom", getStudentClassroom())
                 .append("status", getStatus())
-                .append("studentClassname", getStudentClassname())
                 .toString();
     }
 }

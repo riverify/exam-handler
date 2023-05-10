@@ -9,6 +9,7 @@
         <result property="studentId"    column="student_id"    />
         <result property="studentName"    column="student_name"    />
         <result property="studentMajor"    column="student_major"    />
+        <result property="studentClassname" column="student_classname"/>
         <result property="studentTeacher"    column="student_teacher"    />
         <result property="studentCategory"    column="student_category"    />
         <result property="studentCampus"    column="student_campus"    />
@@ -16,7 +17,6 @@
         <result property="studentSession"    column="student_session"    />
         <result property="studentClassroom"    column="student_classroom"    />
         <result property="status"    column="status"    />
-        <result property="studentClassname" column="student_className"/>
     </resultMap>
 
     <sql id="selectSchoolStudentVo">
@@ -24,37 +24,45 @@
                student_id,
                student_name,
                student_major,
+               student_classname,
                student_teacher,
                student_category,
                student_campus,
                student_day,
                student_session,
                student_classroom,
-               status,
-               student_className
+               status
         from school_student
     </sql>
 
     <select id="selectSchoolStudentList" parameterType="SchoolStudent" resultMap="SchoolStudentResult">
         <include refid="selectSchoolStudentVo"/>
         <where>
-            <if test="studentId != null  and studentId != ''">and student_id = #{studentId}</if>
+            <if test="studentId != null  and studentId != ''">and student_id like concat('%', #{studentId}, '%')</if>
             <if test="studentName != null  and studentName != ''">and student_name like concat('%', #{studentName},
                 '%')
             </if>
-            <if test="studentMajor != null  and studentMajor != ''">and student_major = #{studentMajor}</if>
-            <if test="studentTeacher != null  and studentTeacher != ''">and student_teacher = #{studentTeacher}</if>
-            <if test="studentCategory != null  and studentCategory != ''">and student_category = #{studentCategory}</if>
-            <if test="studentCampus != null ">and student_campus = #{studentCampus}</if>
-            <if test="studentDay != null ">and student_day = #{studentDay}</if>
-            <if test="studentSession != null ">and student_session = #{studentSession}</if>
-            <if test="studentClassroom != null  and studentClassroom != ''">and student_classroom =
-                #{studentClassroom}
+            <if test="studentMajor != null  and studentMajor != ''">and student_major like concat('%', #{studentMajor},
+                '%')
             </if>
-            <if test="status != null  and status != ''">and status = #{status}</if>
-            <if test="studentClassname != null  and studentClassname != ''">and student_className like concat('%',
+            <if test="studentClassname != null  and studentClassname != ''">and student_classname like concat('%',
                 #{studentClassname}, '%')
             </if>
+            <if test="studentTeacher != null  and studentTeacher != ''">and student_teacher like concat('%',
+                #{studentTeacher}, '%')
+            </if>
+            <if test="studentCategory != null  and studentCategory != ''">and student_category like concat('%',
+                #{studentCategory}, '%')
+            </if>
+            <if test="studentCampus != null  and studentCampus != ''">and student_campus like concat('%',
+                #{studentCampus}, '%')
+            </if>
+            <if test="studentDay != null ">and student_day = #{studentDay}</if>
+            <if test="studentSession != null ">and student_session = #{studentSession}</if>
+            <if test="studentClassroom != null  and studentClassroom != ''">and student_classroom like concat('%',
+                #{studentClassroom}, '%')
+            </if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
         </where>
     </select>
 
@@ -69,6 +77,7 @@
             <if test="studentId != null and studentId != ''">student_id,</if>
             <if test="studentName != null and studentName != ''">student_name,</if>
             <if test="studentMajor != null and studentMajor != ''">student_major,</if>
+            <if test="studentClassname != null and studentClassname != ''">student_classname,</if>
             <if test="studentTeacher != null and studentTeacher != ''">student_teacher,</if>
             <if test="studentCategory != null and studentCategory != ''">student_category,</if>
             <if test="studentCampus != null">student_campus,</if>
@@ -76,12 +85,12 @@
             <if test="studentSession != null">student_session,</if>
             <if test="studentClassroom != null">student_classroom,</if>
             <if test="status != null">status,</if>
-            <if test="studentClassname != null and studentClassname != ''">student_className,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="studentId != null and studentId != ''">#{studentId},</if>
             <if test="studentName != null and studentName != ''">#{studentName},</if>
             <if test="studentMajor != null and studentMajor != ''">#{studentMajor},</if>
+            <if test="studentClassname != null and studentClassname != ''">#{studentClassname},</if>
             <if test="studentTeacher != null and studentTeacher != ''">#{studentTeacher},</if>
             <if test="studentCategory != null and studentCategory != ''">#{studentCategory},</if>
             <if test="studentCampus != null">#{studentCampus},</if>
@@ -89,7 +98,6 @@
             <if test="studentSession != null">#{studentSession},</if>
             <if test="studentClassroom != null">#{studentClassroom},</if>
             <if test="status != null">#{status},</if>
-            <if test="studentClassname != null and studentClassname != ''">#{studentClassname},</if>
         </trim>
     </insert>
 
@@ -99,6 +107,7 @@
             <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
             <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
             <if test="studentMajor != null and studentMajor != ''">student_major = #{studentMajor},</if>
+            <if test="studentClassname != null and studentClassname != ''">student_classname = #{studentClassname},</if>
             <if test="studentTeacher != null and studentTeacher != ''">student_teacher = #{studentTeacher},</if>
             <if test="studentCategory != null and studentCategory != ''">student_category = #{studentCategory},</if>
             <if test="studentCampus != null">student_campus = #{studentCampus},</if>
@@ -106,7 +115,6 @@
             <if test="studentSession != null">student_session = #{studentSession},</if>
             <if test="studentClassroom != null">student_classroom = #{studentClassroom},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="studentClassname != null and studentClassname != ''">student_className = #{studentClassname},</if>
         </trim>
         where sid = #{sid}
     </update>
