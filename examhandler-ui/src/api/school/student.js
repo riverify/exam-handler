@@ -10,9 +10,9 @@ export function listStudent(query) {
 }
 
 // 查询学生信息详细
-export function getStudent(studentId) {
+export function getStudent(sid) {
   return request({
-    url: '/school/student/' + studentId,
+    url: '/school/student/' + sid,
     method: 'get'
   })
 }
@@ -36,26 +36,9 @@ export function updateStudent(data) {
 }
 
 // 删除学生信息
-export function delStudent(studentId) {
+export function delStudent(sid) {
   return request({
-    url: '/school/student/' + studentId,
+    url: '/school/student/' + sid,
     method: 'delete'
-  })
-}
-
-// 统计学生信息
-export function countStudent() {
-  return request({
-    url: '/school/student/count',
-    method: 'get'
-  })
-}
-
-// 修改学生信状态
-export function updateStudentStatus(studentId, status) {
-  alert("defined dude")
-  return request({
-    url: '/school/student/status/' + studentId + '/' + status,
-    method: 'put'
   })
 }

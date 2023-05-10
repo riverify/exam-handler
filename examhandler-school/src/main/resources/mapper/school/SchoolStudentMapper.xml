@@ -5,6 +5,7 @@
 <mapper namespace="com.riverify.school.mapper.SchoolStudentMapper">
 
     <resultMap type="SchoolStudent" id="SchoolStudentResult">
+        <result property="sid" column="sid"/>
         <result property="studentId"    column="student_id"    />
         <result property="studentName"    column="student_name"    />
         <result property="studentMajor"    column="student_major"    />
@@ -19,7 +20,8 @@
     </resultMap>
 
     <sql id="selectSchoolStudentVo">
-        select student_id,
+        select sid,
+               student_id,
                student_name,
                student_major,
                student_teacher,
@@ -36,24 +38,18 @@
     <select id="selectSchoolStudentList" parameterType="SchoolStudent" resultMap="SchoolStudentResult">
         <include refid="selectSchoolStudentVo"/>
         <where>
-            <if test="studentId != null  and studentId != ''">and student_id like concat('%', #{studentId}, '%')</if>
+            <if test="studentId != null  and studentId != ''">and student_id = #{studentId}</if>
             <if test="studentName != null  and studentName != ''">and student_name like concat('%', #{studentName},
                 '%')
             </if>
-            <if test="studentMajor != null  and studentMajor != ''">and student_major like concat('%', #{studentMajor},
-                '%')
-            </if>
-            <if test="studentTeacher != null  and studentTeacher != ''">and student_teacher like concat('%',
-                #{studentTeacher}, '%')
-            </if>
-            <if test="studentCategory != null  and studentCategory != ''">and student_category like concat('%',
-                #{studentCategory}, '%')
-            </if>
+            <if test="studentMajor != null  and studentMajor != ''">and student_major = #{studentMajor}</if>
+            <if test="studentTeacher != null  and studentTeacher != ''">and student_teacher = #{studentTeacher}</if>
+            <if test="studentCategory != null  and studentCategory != ''">and student_category = #{studentCategory}</if>
             <if test="studentCampus != null ">and student_campus = #{studentCampus}</if>
             <if test="studentDay != null ">and student_day = #{studentDay}</if>
             <if test="studentSession != null ">and student_session = #{studentSession}</if>
-            <if test="studentClassroom != null  and studentClassroom != ''">and student_classroom like concat('%',
-                #{studentClassroom}, '%')
+            <if test="studentClassroom != null  and studentClassroom != ''">and student_classroom =
+                #{studentClassroom}
             </if>
             <if test="status != null  and status != ''">and status = #{status}</if>
             <if test="studentClassname != null  and studentClassname != ''">and student_className like concat('%',
@@ -62,19 +58,12 @@
         </where>
     </select>
 
-    <select id="selectSchoolStudentByStudentId" parameterType="String" resultMap="SchoolStudentResult">
+    <select id="selectSchoolStudentBySid" parameterType="Long" resultMap="SchoolStudentResult">
         <include refid="selectSchoolStudentVo"/>
-        where student_id = #{studentId}
+        where sid = #{sid}
     </select>
 
-    <!-- 统计总学生数 -->
-    <select id="countSchoolStudent" resultType="int">
-        select count(*)
-        from school_student
-    </select>
-
-
-    <insert id="insertSchoolStudent" parameterType="SchoolStudent">
+    <insert id="insertSchoolStudent" parameterType="SchoolStudent" useGeneratedKeys="true" keyProperty="sid">
         insert into school_student
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="studentId != null and studentId != ''">student_id,</if>
@@ -107,6 +96,7 @@
     <update id="updateSchoolStudent" parameterType="SchoolStudent">
         update school_student
         <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null and studentId != ''">student_id = #{studentId},</if>
             <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
             <if test="studentMajor != null and studentMajor != ''">student_major = #{studentMajor},</if>
             <if test="studentTeacher != null and studentTeacher != ''">student_teacher = #{studentTeacher},</if>
@@ -118,17 +108,19 @@
             <if test="status != null">status = #{status},</if>
             <if test="studentClassname != null and studentClassname != ''">student_className = #{studentClassname},</if>
         </trim>
-        where student_id = #{studentId}
+        where sid = #{sid}
     </update>
 
-    <delete id="deleteSchoolStudentByStudentId" parameterType="String">
-        delete from school_student where student_id = #{studentId}
+    <delete id="deleteSchoolStudentBySid" parameterType="Long">
+        delete
+        from school_student
+        where sid = #{sid}
     </delete>
 
-    <delete id="deleteSchoolStudentByStudentIds" parameterType="String">
-        delete from school_student where student_id in
-        <foreach item="studentId" collection="array" open="(" separator="," close=")">
-            #{studentId}
+    <delete id="deleteSchoolStudentBySids" parameterType="String">
+        delete from school_student where sid in
+        <foreach item="sid" collection="array" open="(" separator="," close=")">
+            #{sid}
         </foreach>
     </delete>
 </mapper>

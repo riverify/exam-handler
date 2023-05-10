@@ -9,10 +9,15 @@ import com.riverify.common.core.domain.BaseEntity;
  * 考场对象 school_classroom
  *
  * @author riverify
- * @date 2023-03-24
+ * @date 2023-04-19
  */
 public class SchoolClassroom extends BaseEntity {
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 考场id主键
+     */
+    private Long columnId;
 
     /**
      * 考场号
@@ -35,8 +40,16 @@ public class SchoolClassroom extends BaseEntity {
     /**
      * 考场状态（0：空闲）
      */
-    @Excel(name = "考场状态", readConverterExp = "0=：空闲")
+    @Excel(name = "考场状态", readConverterExp = "0=启用,1=停用")
     private Long classroomStatus;
+
+    public void setColumnId(Long columnId) {
+        this.columnId = columnId;
+    }
+
+    public Long getColumnId() {
+        return columnId;
+    }
 
     public void setClassroomNumber(String classroomNumber) {
         this.classroomNumber = classroomNumber;
@@ -73,6 +86,7 @@ public class SchoolClassroom extends BaseEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("columnId", getColumnId())
                 .append("classroomNumber", getClassroomNumber())
                 .append("classroomCampus", getClassroomCampus())
                 .append("classroomSize", getClassroomSize())

@@ -9,21 +9,31 @@ import com.riverify.common.core.domain.BaseEntity;
  * 学生信息对象 school_student
  *
  * @author riverify
- * @date 2023-03-24
+ * @date 2023-05-10
  */
-public class SchoolStudent extends BaseEntity
-{
+public class SchoolStudent extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 学号 */
+    /**
+     * 主键
+     */
+    private Long sid;
+
+    /**
+     * 学号
+     */
     @Excel(name = "学号")
     private String studentId;
 
-    /** 姓名 */
+    /**
+     * 姓名
+     */
     @Excel(name = "姓名")
     private String studentName;
 
-    /** 专业名称 */
+    /**
+     * 专业名称
+     */
     @Excel(name = "专业名称")
     private String studentMajor;
 
@@ -60,10 +70,17 @@ public class SchoolStudent extends BaseEntity
     private String status;
 
     /**
-     * 课程名称
+     * 班级名称
      */
-    @Excel(name = "课程名称")
     private String studentClassname;
+
+    public void setSid(Long sid) {
+        this.sid = sid;
+    }
+
+    public Long getSid() {
+        return sid;
+    }
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
@@ -156,6 +173,7 @@ public class SchoolStudent extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("sid", getSid())
                 .append("studentId", getStudentId())
                 .append("studentName", getStudentName())
                 .append("studentMajor", getStudentMajor())

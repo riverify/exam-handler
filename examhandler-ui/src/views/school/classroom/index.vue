@@ -9,14 +9,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="所在校区" prop="classroomCampus">
-        <el-input
-          v-model="queryParams.classroomCampus"
-          placeholder="请输入所在校区"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="可用座位" prop="classroomSize">
         <el-input
           v-model="queryParams.classroomSize"
@@ -39,7 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['school:classroom:add']"
+          v-has-role="['admin', 'normal']"
         >新增
         </el-button>
       </el-col>
@@ -51,7 +43,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['school:classroom:edit']"
+          v-has-role="['admin', 'normal']"
         >修改
         </el-button>
       </el-col>
@@ -63,7 +55,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['school:classroom:remove']"
+          v-has-role="['admin', 'normal']"
         >删除
         </el-button>
       </el-col>
@@ -74,7 +66,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['school:classroom:export']"
+          v-has-role="['admin', 'normal']"
         >导出
         </el-button>
       </el-col>
@@ -83,10 +75,31 @@
 
     <el-table v-loading="loading" :data="classroomList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
+      <!-- 隐藏主键 -->
+      <el-table-column label="考场id主键" align="center" prop="columnId" show-overflow-tooltip="false" v-if="false"/>
       <el-table-column label="考场号" align="center" prop="classroomNumber"/>
       <el-table-column label="所在校区" align="center" prop="classroomCampus"/>
       <el-table-column label="可用座位" align="center" prop="classroomSize"/>
-      <el-table-column label="考场状态" align="center" prop="classroomStatus"/>
+      <el-table-column label="状态" align="center" prop="classroomStatus">
+        <template slot-scope="scope">
+          <el-tag
+            v-if="scope.row.classroomStatus === 0"
+            type="success"
+            @click="updateStatus(scope.row)"
+            style="cursor: pointer;"
+          >
+            启用中
+          </el-tag>
+          <el-tag
+            v-else
+            type="danger"
+            @click="updateStatus(scope.row)"
+            style="cursor: pointer;"
+          >
+            停用中
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -94,7 +107,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['school:classroom:edit']"
+            v-has-role="['admin', 'normal']"
           >修改
           </el-button>
           <el-button
@@ -102,7 +115,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['school:classroom:remove']"
+            v-has-role="['admin', 'normal']"
           >删除
           </el-button>
         </template>
@@ -123,13 +136,9 @@
         <el-form-item label="考场号" prop="classroomNumber">
           <el-input v-model="form.classroomNumber" placeholder="请输入考场号"/>
         </el-form-item>
-        <el-form-item label="所在校区" prop="classroomCampus">
-          <el-input v-model="form.classroomCampus" placeholder="请输入所在校区"/>
-        </el-form-item>
         <el-form-item label="可用座位" prop="classroomSize">
           <el-input v-model="form.classroomSize" placeholder="请输入可用座位"/>
         </el-form-item>
-        <!--   todo:增加和student类似的状态切换，状态支持多个一起切换     -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -141,6 +150,7 @@
 
 <script>
   import {listClassroom, getClassroom, delClassroom, addClassroom, updateClassroom} from "@/api/school/classroom";
+  import request from "@/utils/request";
 
   export default {
     name: "Classroom",
@@ -181,7 +191,7 @@
             {required: true, message: "考场号不能为空", trigger: "blur"}
           ],
           classroomCampus: [
-            {required: true, message: "所在校区不能为空", trigger: "blur"}
+            {required: true, message: "所在校区不能为空", trigger: "change"}
           ],
           classroomSize: [
             {required: true, message: "可用座位不能为空", trigger: "blur"}
@@ -213,6 +223,7 @@
       // 表单重置
       reset() {
         this.form = {
+          columnId: null,
           classroomNumber: null,
           classroomCampus: null,
           classroomSize: null,
@@ -232,7 +243,7 @@
       },
       // 多选框选中数据
       handleSelectionChange(selection) {
-        this.ids = selection.map(item => item.classroomNumber)
+        this.ids = selection.map(item => item.columnId)
         this.single = selection.length !== 1
         this.multiple = !selection.length
       },
@@ -245,18 +256,18 @@
       /** 修改按钮操作 */
       handleUpdate(row) {
         this.reset();
-        const classroomNumber = row.classroomNumber || this.ids
-        getClassroom(classroomNumber).then(response => {
+        const columnId = row.columnId || this.ids
+        getClassroom(columnId).then(response => {
           this.form = response.data;
           this.open = true;
-          this.title = "修改考场信息(不可修改考场号)";
+          this.title = "修改考场";
         });
       },
       /** 提交按钮 */
       submitForm() {
         this.$refs["form"].validate(valid => {
           if (valid) {
-            if (this.form.classroomStatus != null) {
+            if (this.form.columnId != null) {
               updateClassroom(this.form).then(response => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -272,11 +283,23 @@
           }
         });
       },
+      /** 修改状态 */
+      updateStatus(row) {
+        const classroomId = row.columnId;
+        const status = row.classroomStatus === 0 ? 1 : 0;
+        return request({
+          url: '/school/classroom/classroomStatus/' + classroomId + '/' + status,
+          method: 'put'
+        }).then(response => {
+          this.$modal.msgSuccess("修改成功");
+          this.getList();
+        });
+      },
       /** 删除按钮操作 */
       handleDelete(row) {
-        const classroomNumbers = row.classroomNumber || this.ids;
-        this.$modal.confirm('是否确认删除考场编号为"' + classroomNumbers + '"的数据项？').then(function () {
-          return delClassroom(classroomNumbers);
+        const columnIds = row.columnId || this.ids;
+        this.$modal.confirm('是否确认删除考场编号为"' + columnIds + '"的数据项？').then(function () {
+          return delClassroom(columnIds);
         }).then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");

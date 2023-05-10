@@ -5,6 +5,7 @@
 <mapper namespace="com.riverify.school.mapper.SchoolClassroomMapper">
 
     <resultMap type="SchoolClassroom" id="SchoolClassroomResult">
+        <result property="columnId" column="column_id"/>
         <result property="classroomNumber" column="classroom_number"/>
         <result property="classroomCampus" column="classroom_campus"/>
         <result property="classroomSize" column="classroom_size"/>
@@ -12,7 +13,7 @@
     </resultMap>
 
     <sql id="selectSchoolClassroomVo">
-        select classroom_number, classroom_campus, classroom_size, classroom_status
+        select column_id, classroom_number, classroom_campus, classroom_size, classroom_status
         from school_classroom
     </sql>
 
@@ -28,12 +29,12 @@
         </where>
     </select>
 
-    <select id="selectSchoolClassroomByClassroomNumber" parameterType="String" resultMap="SchoolClassroomResult">
+    <select id="selectSchoolClassroomByColumnId" parameterType="Long" resultMap="SchoolClassroomResult">
         <include refid="selectSchoolClassroomVo"/>
-        where classroom_number = #{classroomNumber}
+        where column_id = #{columnId}
     </select>
 
-    <insert id="insertSchoolClassroom" parameterType="SchoolClassroom">
+    <insert id="insertSchoolClassroom" parameterType="SchoolClassroom" useGeneratedKeys="true" keyProperty="columnId">
         insert into school_classroom
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="classroomNumber != null and classroomNumber != ''">classroom_number,</if>
@@ -52,23 +53,24 @@
     <update id="updateSchoolClassroom" parameterType="SchoolClassroom">
         update school_classroom
         <trim prefix="SET" suffixOverrides=",">
+            <if test="classroomNumber != null and classroomNumber != ''">classroom_number = #{classroomNumber},</if>
             <if test="classroomCampus != null and classroomCampus != ''">classroom_campus = #{classroomCampus},</if>
             <if test="classroomSize != null">classroom_size = #{classroomSize},</if>
             <if test="classroomStatus != null">classroom_status = #{classroomStatus},</if>
         </trim>
-        where classroom_number = #{classroomNumber}
+        where column_id = #{columnId}
     </update>
 
-    <delete id="deleteSchoolClassroomByClassroomNumber" parameterType="String">
+    <delete id="deleteSchoolClassroomByColumnId" parameterType="Long">
         delete
         from school_classroom
-        where classroom_number = #{classroomNumber}
+        where column_id = #{columnId}
     </delete>
 
-    <delete id="deleteSchoolClassroomByClassroomNumbers" parameterType="String">
-        delete from school_classroom where classroom_number in
-        <foreach item="classroomNumber" collection="array" open="(" separator="," close=")">
-            #{classroomNumber}
+    <delete id="deleteSchoolClassroomByColumnIds" parameterType="String">
+        delete from school_classroom where column_id in
+        <foreach item="columnId" collection="array" open="(" separator="," close=")">
+            #{columnId}
         </foreach>
     </delete>
 </mapper>

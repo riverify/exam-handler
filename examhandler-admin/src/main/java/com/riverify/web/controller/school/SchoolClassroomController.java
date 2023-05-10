@@ -2,7 +2,6 @@ package com.riverify.school.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,7 @@ import com.riverify.common.core.page.TableDataInfo;
  * 考场Controller
  *
  * @author riverify
- * @date 2023-03-24
+ * @date 2023-04-19
  */
 @RestController
 @RequestMapping("/school/classroom")
@@ -61,9 +60,9 @@ public class SchoolClassroomController extends BaseController {
      * 获取考场详细信息
      */
     @PreAuthorize("@ss.hasPermi('school:classroom:query')")
-    @GetMapping(value = "/{classroomNumber}")
-    public AjaxResult getInfo(@PathVariable("classroomNumber") String classroomNumber) {
-        return success(schoolClassroomService.selectSchoolClassroomByClassroomNumber(classroomNumber));
+    @GetMapping(value = "/{columnId}")
+    public AjaxResult getInfo(@PathVariable("columnId") Long columnId) {
+        return success(schoolClassroomService.selectSchoolClassroomByColumnId(columnId));
     }
 
     /**
@@ -91,8 +90,16 @@ public class SchoolClassroomController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('school:classroom:remove')")
     @Log(title = "考场", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{classroomNumbers}")
-    public AjaxResult remove(@PathVariable String[] classroomNumbers) {
-        return toAjax(schoolClassroomService.deleteSchoolClassroomByClassroomNumbers(classroomNumbers));
+    @DeleteMapping("/{columnIds}")
+    public AjaxResult remove(@PathVariable Long[] columnIds) {
+        return toAjax(schoolClassroomService.deleteSchoolClassroomByColumnIds(columnIds));
+    }
+
+    /**
+     * 更新考场状态
+     */
+    @PutMapping("/classroomStatus/{classroomId}/{status}")
+    public AjaxResult status(@PathVariable Long classroomId, @PathVariable Long status) {
+        return toAjax(schoolClassroomService.updateSchoolClassroomStatus(classroomId, status));
     }
 }

@@ -7,6 +7,7 @@
           placeholder="请输入学号"
           clearable
           @keyup.enter.native="handleQuery"
+          v-has-role="['admin', 'normal']"
         />
       </el-form-item>
       <el-form-item label="姓名" prop="studentName">
@@ -95,7 +96,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['school:student:add']"
+          v-has-role="['admin', 'normal']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -106,7 +107,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['school:student:edit']"
+          v-has-role="['admin', 'normal']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -117,7 +118,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['school:student:remove']"
+          v-has-role="['admin', 'normal']"
         >删除
         </el-button>
       </el-col>
@@ -128,7 +129,7 @@
           icon="el-icon-upload2"
           size="mini"
           @click="handleImport"
-          v-hasPermi="['system:user:import']"
+          v-has-role="['admin', 'normal']"
         >导入
         </el-button>
       </el-col>
@@ -139,7 +140,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['school:student:export']"
+          v-has-role="['admin', 'normal']"
         >导出
         </el-button>
       </el-col>
@@ -197,7 +198,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['school:student:edit']"
+            v-has-role="['admin', 'normal']"
           >修改
           </el-button>
           <el-button
@@ -205,7 +206,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['school:student:remove']"
+            v-has-role="['admin', 'normal']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -336,12 +337,13 @@ export default {
         // 设置上传的请求头部
         headers: {Authorization: "Bearer " + getToken()},
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + "/school/student/import"
+        url: process.env.VUE_APP_BASE_API + "/school/student/importData"  /* important code */
       },
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        sid: null,
         studentId: null,
         studentName: null,
         studentMajor: null,
@@ -405,6 +407,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        sid: null,
         studentId: null,
         studentName: null,
         studentMajor: null,
@@ -414,7 +417,7 @@ export default {
         studentDay: null,
         studentSession: null,
         studentClassroom: null,
-          status: null
+        status: null
       };
       this.resetForm("form");
     },
@@ -430,8 +433,8 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.studentId)
-      this.single = selection.length!==1
+      this.ids = selection.map(item => item.sid)
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -443,8 +446,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const studentId = row.studentId || this.ids
-      getStudent(studentId).then(response => {
+      const sid = row.sid || this.ids
+      getStudent(sid).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改学生信息(无法修改学号)";
@@ -472,10 +475,10 @@ export default {
     },
     /** 修改状态 */
     updateStatus(row) {
-      const studentId = row.studentId || this.ids
+      const sid = row.sid || this.ids
       const status = row.status === '0' ? 1 : 0
       return request({
-        url: '/school/student/status/' + studentId + '/' + status,
+        url: '/school/student/status/' + sid + '/' + status,
         method: 'put'
       }).then(response => {
         this.$modal.msgSuccess("修改成功");
@@ -484,9 +487,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const studentIds = row.studentId || this.ids;
-      this.$modal.confirm('是否确认删除学生信息编号为"' + studentIds + '"的数据项？').then(function () {
-        return delStudent(studentIds);
+      const sid = row.sid || this.ids;
+      this.$modal.confirm('是否确认删除选中的数据项？').then(function () {
+        return delStudent(sid);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -504,15 +507,11 @@ export default {
       this.upload.title = "学生导入";
       this.upload.open = true;
     },
-    // /** 统计总学生人数 */
-    // handleCount(response) {
-    //   this.$modal.confirm("是否需要统计总学生人数？").then(() => {
-    //     countStudent().then(response => {
-    //       this.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "统计结果", {dangerouslyUseHTMLString: true});
-    //     });
-    //   }).catch(() => {
-    //   });
-    // },
+    /** 导入模板 */
+    importTemplate() {
+      this.download('school/student/importTemplate', {}, `student_template.xlsx`)
+    },
+
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
       this.upload.isUploading = true;

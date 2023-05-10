@@ -10,9 +10,9 @@ export function listClassroom(query) {
 }
 
 // 查询考场详细
-export function getClassroom(classroomNumber) {
+export function getClassroom(columnId) {
   return request({
-    url: '/school/classroom/' + classroomNumber,
+    url: '/school/classroom/' + columnId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateClassroom(data) {
 }
 
 // 删除考场
-export function delClassroom(classroomNumber) {
+export function delClassroom(columnId) {
   return request({
-    url: '/school/classroom/' + classroomNumber,
+    url: '/school/classroom/' + columnId,
     method: 'delete'
   })
 }
