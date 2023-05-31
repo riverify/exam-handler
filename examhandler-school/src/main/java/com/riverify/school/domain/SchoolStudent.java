@@ -77,6 +77,8 @@ public class SchoolStudent extends BaseEntity {
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     private String status;
 
+    private Long studentManagerid;
+
     public void setSid(Long sid) {
         this.sid = sid;
     }
@@ -173,6 +175,14 @@ public class SchoolStudent extends BaseEntity {
         return status;
     }
 
+    public void setStudentManagerid(Long studentManagerid) {
+        this.studentManagerid = studentManagerid;
+    }
+
+    public Long getStudentManagerid() {
+        return studentManagerid;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -188,6 +198,7 @@ public class SchoolStudent extends BaseEntity {
                 .append("studentSession", getStudentSession())
                 .append("studentClassroom", getStudentClassroom())
                 .append("status", getStatus())
+                .append("studentManagerid", getStudentManagerid())
                 .toString();
     }
 }

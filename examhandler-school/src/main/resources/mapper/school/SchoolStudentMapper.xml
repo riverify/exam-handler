@@ -17,6 +17,7 @@
         <result property="studentSession"    column="student_session"    />
         <result property="studentClassroom"    column="student_classroom"    />
         <result property="status"    column="status"    />
+        <result property="studentManagerid" column="student_managerid"/>
     </resultMap>
 
     <sql id="selectSchoolStudentVo">
@@ -31,7 +32,8 @@
                student_day,
                student_session,
                student_classroom,
-               status
+               status,
+               student_managerid
         from school_student
     </sql>
 
@@ -63,6 +65,7 @@
                 #{studentClassroom}, '%')
             </if>
             <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="studentManagerid != null ">and student_managerid = #{studentManagerid}</if>
         </where>
     </select>
 
@@ -85,6 +88,7 @@
             <if test="studentSession != null">student_session,</if>
             <if test="studentClassroom != null">student_classroom,</if>
             <if test="status != null">status,</if>
+            <if test="studentManagerid != null">student_managerid,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="studentId != null and studentId != ''">#{studentId},</if>
@@ -98,6 +102,7 @@
             <if test="studentSession != null">#{studentSession},</if>
             <if test="studentClassroom != null">#{studentClassroom},</if>
             <if test="status != null">#{status},</if>
+            <if test="studentManagerid != null">#{studentManagerid},</if>
         </trim>
     </insert>
 
@@ -115,6 +120,7 @@
             <if test="studentSession != null">student_session = #{studentSession},</if>
             <if test="studentClassroom != null">student_classroom = #{studentClassroom},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="studentManagerid != null">student_managerid = #{studentManagerid},</if>
         </trim>
         where sid = #{sid}
     </update>

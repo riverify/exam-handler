@@ -95,6 +95,11 @@ public class SchoolStudentServiceImpl implements ISchoolStudentService {
         SchoolStudent student = new SchoolStudent();
         student.setSid(sid);
         student.setStatus(status);
+        // 判断是否已经排课了，如果是的话，就不可以修改状态了
+        SchoolStudent one = schoolStudentMapper.selectSchoolStudentBySid(sid);
+        if (one != null && one.getStudentManagerid() != 0) {
+            throw new ServiceException("该学生已经排课，不可以修改状态！");
+        }
         return schoolStudentMapper.updateSchoolStudent(student);
     }
 
