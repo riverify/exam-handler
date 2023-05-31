@@ -2,6 +2,7 @@ package com.riverify.school.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.riverify.school.domain.SchoolManager;
 
 /**

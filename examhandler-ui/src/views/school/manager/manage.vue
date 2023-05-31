@@ -17,8 +17,8 @@
           <template slot="append">分钟</template>
         </el-input>
       </el-form-item>
-      <el-form-item label="考试间隔" prop="ralex">
-        <el-input v-model="formData.ralex" placeholder="请输入考试间隔" :maxlength="4" clearable
+      <el-form-item label="考试间隔" prop="relax">
+        <el-input v-model="formData.relax" placeholder="请输入考试间隔" :maxlength="4" clearable
                   prefix-icon='el-icon-timer' :style="{width: '100%'}">
           <template slot="append">分钟</template>
         </el-input>
@@ -40,6 +40,7 @@
 </template>
 <script>
   import axios from "axios";
+  import request from "@/utils/request";
 
   export default {
     components: {},
@@ -50,7 +51,7 @@
           date: null,
           startend: null,
           duration: undefined,
-          ralex: undefined,
+          relax: undefined,
           subject: undefined,
           teacher: undefined,
         },
@@ -70,7 +71,7 @@
             message: '请输入考试时长',
             trigger: 'blur'
           }],
-          ralex: [{
+          relax: [{
             required: true,
             message: '请输入考试间隔',
             trigger: 'blur'
@@ -94,19 +95,30 @@
       submitForm() {
         this.$refs['elForm'].validate(valid => {
           if (!valid) return
-          // 示例代码：
-          axios.post('/school/manager/manager', this.formData)
-            .then(response => {
-              // 表单提交成功
-              console.log(response.data);
-              // 执行其他操作，如显示成功消息或重定向到其他页面
-            })
-            .catch(error => {
-              // 处理错误情况
-              console.error(error);
-              // 显示错误消息或执行其他错误处理逻辑
+          // 表单提交
+          manage(this.formData).then(response => {
+            // 表单提交成功
+            console.log(response.data);
+            // 执行其他操作，如显示成功消息或重定向到其他页面
+          }).catch(error => {
+            // 处理错误情况
+            console.error(error);
+            // 显示错误消息或执行其他错误处理逻辑
+          })
 
-            })
+          // 示例代码：
+          // axios.post('/school/manager', this.formData)
+          //   .then(response => {
+          //     // 表单提交成功
+          //     console.log(response.data);
+          //     // 执行其他操作，如显示成功消息或重定向到其他页面
+          //   })
+          //   .catch(error => {
+          //     // 处理错误情况
+          //     console.error(error);
+          //     // 显示错误消息或执行其他错误处理逻辑
+          //
+          //   })
         })
       },
       resetForm() {
@@ -115,6 +127,13 @@
     }
   }
 
+  export function manage(data) {
+    return request({
+      url: '/school/manager/manage',
+      method: 'post',
+      data: data
+    })
+  }
 </script>
 <style>
 </style>

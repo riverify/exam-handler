@@ -42,3 +42,11 @@ export function delManager(managerId) {
     method: 'delete'
   })
 }
+
+export function manage(data) {
+  return request({
+    url: '/school/manager/manage',
+    method: 'post',
+    data: data
+  })
+}

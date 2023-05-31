@@ -2,6 +2,7 @@ package com.riverify.school.service.impl;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.riverify.school.mapper.SchoolManagerMapper;
@@ -16,6 +17,7 @@ import com.riverify.school.service.ISchoolManagerService;
  */
 @Service
 public class SchoolManagerServiceImpl implements ISchoolManagerService {
+
     @Autowired
     private SchoolManagerMapper schoolManagerMapper;
 

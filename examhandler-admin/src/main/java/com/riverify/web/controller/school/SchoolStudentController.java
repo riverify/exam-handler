@@ -92,6 +92,7 @@ public class SchoolStudentController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody SchoolStudent schoolStudent)
     {
+        schoolStudent.setStudentManagerid(0L);
         return toAjax(schoolStudentService.insertSchoolStudent(schoolStudent));
     }
 

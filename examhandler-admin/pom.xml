@@ -64,7 +64,16 @@
             <groupId>com.riverify</groupId>
             <artifactId>examhandler-school</artifactId>
             <version>3.8.5</version>
-            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
         </dependency>
 
     </dependencies>

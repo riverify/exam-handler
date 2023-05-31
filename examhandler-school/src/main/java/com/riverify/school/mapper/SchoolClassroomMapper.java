@@ -1,7 +1,10 @@
 package com.riverify.school.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.riverify.school.domain.SchoolClassroom;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 考场Mapper接口
@@ -9,6 +12,7 @@ import com.riverify.school.domain.SchoolClassroom;
  * @author riverify
  * @date 2023-04-19
  */
+@Mapper
 public interface SchoolClassroomMapper {
     /**
      * 查询考场
