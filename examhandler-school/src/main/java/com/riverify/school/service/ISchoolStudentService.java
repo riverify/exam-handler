@@ -11,7 +11,7 @@ import com.riverify.school.domain.SchoolStudent;
  * @author riverify
  * @date 2023-05-10
  */
-public interface ISchoolStudentService {
+public interface ISchoolStudentService extends IService<SchoolStudent> {
     /**
      * 查询学生信息
      *

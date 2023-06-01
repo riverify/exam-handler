@@ -18,7 +18,7 @@ import com.riverify.school.service.ISchoolStudentService;
  * @date 2023-05-10
  */
 @Service
-public class SchoolStudentServiceImpl implements ISchoolStudentService {
+public class SchoolStudentServiceImpl extends ServiceImpl<SchoolStudentMapper, SchoolStudent> implements ISchoolStudentService {
 
     @Autowired
     private SchoolStudentMapper schoolStudentMapper;

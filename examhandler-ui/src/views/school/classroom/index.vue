@@ -136,6 +136,9 @@
         <el-form-item label="考场号" prop="classroomNumber">
           <el-input v-model="form.classroomNumber" placeholder="请输入考场号"/>
         </el-form-item>
+        <el-form-item label="所在校区" prop="classroomCampus">
+          <el-input v-model="form.classroomCampus" placeholder="请输入所在校区"/>
+        </el-form-item>
         <el-form-item label="可用座位" prop="classroomSize">
           <el-input v-model="form.classroomSize" placeholder="请输入可用座位"/>
         </el-form-item>

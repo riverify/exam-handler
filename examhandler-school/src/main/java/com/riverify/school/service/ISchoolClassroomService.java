@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @author riverify
  * @date 2023-04-19
  */
-public interface ISchoolClassroomService {
+public interface ISchoolClassroomService extends IService<SchoolClassroom> {
     /**
      * 查询考场
      *

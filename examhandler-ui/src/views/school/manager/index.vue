@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="准考证号" prop="managerSid">
+      <el-form-item label="考场号" prop="managerSid">
         <el-input
           v-model="queryParams.managerSid"
           placeholder="请输入准考证号"
@@ -129,7 +129,7 @@
     <el-table v-loading="loading" :data="managerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="考场编号" align="center" prop="managerId"/>
-      <el-table-column label="准考证号" align="center" prop="managerSid"/>
+      <el-table-column label="考场号" align="center" prop="managerSid"/>
       <el-table-column label="考场校区" align="center" prop="managerRegion"/>
       <el-table-column label="考场教室" align="center" prop="managerClassroom"/>
       <el-table-column label="考试人数" align="center" prop="managerStudents"/>
@@ -170,7 +170,7 @@
     <!-- 添加或修改考场安排对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="准考证号" prop="managerSid">
+        <el-form-item label="考场号" prop="managerSid">
           <el-input v-model="form.managerSid" placeholder="请输入准考证号"/>
         </el-form-item>
         <el-form-item label="考场校区" prop="managerRegion">

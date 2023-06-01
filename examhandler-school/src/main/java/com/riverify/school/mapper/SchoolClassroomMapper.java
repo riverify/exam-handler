@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2023-04-19
  */
 @Mapper
-public interface SchoolClassroomMapper {
+public interface SchoolClassroomMapper extends BaseMapper<SchoolClassroom> {
     /**
      * 查询考场
      *

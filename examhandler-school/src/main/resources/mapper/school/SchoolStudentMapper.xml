@@ -35,7 +35,6 @@
                status,
                student_managerid
         from school_student
-        order by student_managerid asc
     </sql>
 
     <select id="selectSchoolStudentList" parameterType="SchoolStudent" resultMap="SchoolStudentResult">

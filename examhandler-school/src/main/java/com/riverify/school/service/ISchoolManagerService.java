@@ -11,7 +11,7 @@ import com.riverify.school.domain.SchoolManager;
  * @author riverify
  * @date 2023-05-23
  */
-public interface ISchoolManagerService {
+public interface ISchoolManagerService extends IService<SchoolManager> {
     /**
      * 查询考场安排
      *

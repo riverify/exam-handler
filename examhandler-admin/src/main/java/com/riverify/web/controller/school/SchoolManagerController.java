@@ -1,21 +1,21 @@
 package com.riverify.web.controller.school;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.riverify.common.utils.DateUtils;
 import com.riverify.school.domain.SchoolClassroom;
 import com.riverify.school.domain.SchoolStudent;
-import com.riverify.school.newMapper.NSchoolClassroomMapper;
-import com.riverify.school.newService.NISchoolClassroomService;
-import com.riverify.school.newService.NISchoolManagerService;
-import com.riverify.school.newService.NISchoolStudentService;
+
 import com.riverify.school.service.ISchoolClassroomService;
 import com.riverify.school.domain.ManageForm;
+import com.riverify.school.service.ISchoolStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,21 +49,12 @@ public class SchoolManagerController extends BaseController {
     @Autowired
     private ISchoolManagerService schoolManagerService;
 
-    @Autowired
-    private NISchoolManagerService nschoolManagerService;
-
-    @Autowired
-    private NISchoolStudentService nschoolStudentService;
-
-    @Autowired
-    private NISchoolClassroomService nschoolClassroomService;
-
-    @Autowired
-    private NSchoolClassroomMapper nSchoolClassroomMapper;
-
 
     @Autowired
     private ISchoolClassroomService schoolClassroomService;
+
+    @Autowired
+    private ISchoolStudentService schoolStudentService;
 
     /**
      * 查询考场安排列表
@@ -148,19 +139,18 @@ public class SchoolManagerController extends BaseController {
         String subject = manageForm.getSubject();
 
         LambdaQueryWrapper<SchoolStudent> studentQueryWrapper = new LambdaQueryWrapper<>();
-        LambdaUpdateWrapper<SchoolStudent> studentUpdateWrapper = new LambdaUpdateWrapper<>();
+
         LambdaQueryWrapper<SchoolClassroom> classroomQueryWrapper = new LambdaQueryWrapper<>();
         LambdaQueryWrapper<SchoolManager> managerQueryWrapper = new LambdaQueryWrapper<>();
         // ========== 开始查询 ===========
         // 需要是选择的学科
-        studentUpdateWrapper.eq(SchoolStudent::getStudentClassname, subject);
         studentQueryWrapper.eq(SchoolStudent::getStudentClassname, subject);
+
         // 需要是未分配考场的学生
-        studentUpdateWrapper.eq(SchoolStudent::getStudentManagerid, 0);
         studentQueryWrapper.eq(SchoolStudent::getStudentManagerid, 0);
+
         // 如果有填写特定教师，那就需要是这个教师的学生
         if (manageForm.getTeacher() != null) {
-            studentUpdateWrapper.eq(SchoolStudent::getStudentTeacher, manageForm.getTeacher());
             studentQueryWrapper.eq(SchoolStudent::getStudentTeacher, manageForm.getTeacher());
         }
 
@@ -168,15 +158,17 @@ public class SchoolManagerController extends BaseController {
         // 寻找空闲考场
         // 先查询所有考场
 
-//        List<SchoolClassroom> classrooms = nschoolClassroomService.list();
-        List<SchoolClassroom> classrooms = schoolClassroomService.selectSchoolClassroomList(null);
+        List<SchoolClassroom> classrooms = schoolClassroomService.list();
+//        List<SchoolClassroom> classrooms = schoolClassroomService.selectSchoolClassroomList(null);
         // 遍历考场，把每个考场带入安排表，寻找非冲突的考场
         for (SchoolClassroom classroom : classrooms) {
 
             studentQueryWrapper.eq(SchoolStudent::getStudentCampus, classroom.getClassroomCampus());
+
             // 查询这一批的学生人数
-            int studentCount = (int) nschoolStudentService.count(studentQueryWrapper);
-            if (studentCount > classroom.getClassroomSize()) {
+            List<SchoolStudent> students = schoolStudentService.list(studentQueryWrapper);
+
+            if (students.size() > classroom.getClassroomSize()) {
                 // 如果人数大于考场容量，那就跳过这个考场
                 continue;
             }
@@ -186,7 +178,9 @@ public class SchoolManagerController extends BaseController {
             // 先查询这个考场是否有冲突
             // 获取这个考场的开始结束datetime
             // 先获取考场的安排
-            List<SchoolManager> schoolManagers = nschoolManagerService.list(managerQueryWrapper);
+            managerQueryWrapper = new LambdaQueryWrapper<>();
+            managerQueryWrapper.eq(SchoolManager::getManagerClassroom, classroom.getClassroomNumber());
+            List<SchoolManager> schoolManagers = schoolManagerService.list(managerQueryWrapper);
             // 遍历安排，把每个安排带入判断
             for (SchoolManager schoolManager : schoolManagers) {
                 // 获取安排的开始结束时间
@@ -205,32 +199,59 @@ public class SchoolManagerController extends BaseController {
             if (flag) {
                 continue;
             }
-
-
             Integer sid = generateValidateCode(9);
-
+            AtomicInteger stdNum = new AtomicInteger();
 
             // 如果不冲突，那就把这个考场分配给学生，这个考场需要是和学生同校区
-            studentUpdateWrapper.eq(SchoolStudent::getStudentCampus, sid);
-            // 对学生进行分配，先修改学生表
-            studentUpdateWrapper.set(SchoolStudent::getStudentManagerid, classroom.getColumnId());
-            nschoolStudentService.update(studentUpdateWrapper);
+            for (SchoolStudent student : students) {
+                // 确认学生属于这个考场的校区
+                if (student.getStudentCampus().equals(classroom.getClassroomCampus())) {
+                    // 分配考场
+                    student.setStudentManagerid(Long.valueOf(sid));
+                    // 更新学生表
+                    schoolStudentService.updateSchoolStudent(student);
+                    stdNum.getAndIncrement();
+                }
+            }
+
             // 修改安排表
-            LambdaUpdateWrapper<SchoolManager> managerUpdateWrapper = new LambdaUpdateWrapper<>();
-            managerUpdateWrapper.set(SchoolManager::getManagerStartdate, startDateTime);
-            managerUpdateWrapper.set(SchoolManager::getManagerDuration, manageForm.getDuration());
-            managerUpdateWrapper.set(SchoolManager::getManagerRegion, classroom.getClassroomCampus());
-            managerUpdateWrapper.set(SchoolManager::getManagerClassroom, classroom.getClassroomNumber());
-            managerUpdateWrapper.set(SchoolManager::getManagerSubject, subject);
-            managerUpdateWrapper.set(SchoolManager::getManagerSid, sid);
+            // 创建安排表对象
+            SchoolManager schoolManager = new SchoolManager();
+            // 把开始日期变回data类型
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date formateDate = new Date();
+            try {
+                formateDate = sdf.parse(startDateTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            schoolManager.setManagerStartdate(formateDate);
+            schoolManager.setManagerDuration(Long.valueOf(manageForm.getDuration()));
+            schoolManager.setManagerRegion(classroom.getClassroomCampus());
+            schoolManager.setManagerClassroom(classroom.getClassroomNumber());
+            schoolManager.setManagerSubject(subject);
+            schoolManager.setManagerSid(String.valueOf(sid));
+            schoolManager.setManagerStudents(Long.valueOf(String.valueOf(stdNum)));
 
-            nschoolManagerService.update(managerUpdateWrapper);
+            schoolManagerService.insertSchoolManager(schoolManager);
 
+//            // 修改安排表
+//            LambdaUpdateWrapper<SchoolManager> managerUpdateWrapper = new LambdaUpdateWrapper<>();
+//            managerUpdateWrapper.set(SchoolManager::getManagerStartdate, startDateTime);
+//            managerUpdateWrapper.set(SchoolManager::getManagerDuration, manageForm.getDuration());
+//            managerUpdateWrapper.set(SchoolManager::getManagerRegion, classroom.getClassroomCampus());
+//            managerUpdateWrapper.set(SchoolManager::getManagerClassroom, classroom.getClassroomNumber());
+//            managerUpdateWrapper.set(SchoolManager::getManagerSubject, subject);
+//            managerUpdateWrapper.set(SchoolManager::getManagerSid, sid);
+//
+//            schoolManagerService.update(managerUpdateWrapper);
+//
+            return toAjax(stdNum.get());
 
         }
 
+        return AjaxResult.warn("排考失败");
 
-        return success();
     }
 
     public static Integer generateValidateCode(int length) {
@@ -245,8 +266,13 @@ public class SchoolManagerController extends BaseController {
             if (code < 100000) {
                 code = code + 100000;//保证随机数为6位数字
             }
+        } else if (length == 9) {
+            code = new Random().nextInt(999999999);//生成随机数，最大为999999
+            if (code < 100000000) {
+                code = code + 100000000;//保证随机数为9位数字
+            }
         } else {
-            throw new RuntimeException("只能生成4位或6位数字验证码");
+            throw new RuntimeException("只能生成4位或6位或9位数字验证码");
         }
         return code;
     }

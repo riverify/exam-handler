@@ -29,7 +29,7 @@ import com.riverify.common.utils.StringUtils;
  * 
  * @author ruoyi
  */
-@Configuration
+//@Configuration
 public class MyBatisConfig
 {
     @Autowired
