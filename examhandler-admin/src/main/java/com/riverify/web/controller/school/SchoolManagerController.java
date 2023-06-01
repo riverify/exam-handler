@@ -131,9 +131,10 @@ public class SchoolManagerController extends BaseController {
         String end = startend[1];
         // 获取日期
         Date date = manageForm.getDate();
-        // 合并日期和时间 (年月日)
-        String startDateTime = date.toString() + " " + start;
-        String endDateTime = date.toString() + " " + end;
+        // 替换日期中的时间，改成开始时间和结束时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String startDateTime = sdf.format(date) + " " + start;
+        String endDateTime = sdf.format(date) + " " + end;
 
         // 获取考试课程
         String subject = manageForm.getSubject();
@@ -154,6 +155,12 @@ public class SchoolManagerController extends BaseController {
             studentQueryWrapper.eq(SchoolStudent::getStudentTeacher, manageForm.getTeacher());
         }
 
+//        // 查询这一批的学生人数，如果人数为0，那就不用排了
+//        List<SchoolStudent> students = schoolStudentService.list(studentQueryWrapper);
+//        if (students.size() == 0) {
+//            return AjaxResult.error("没有符合条件的学生");
+//        }
+
         // ========= 开始排考场 =========
         // 寻找空闲考场
         // 先查询所有考场
@@ -167,6 +174,11 @@ public class SchoolManagerController extends BaseController {
 
             // 查询这一批的学生人数
             List<SchoolStudent> students = schoolStudentService.list(studentQueryWrapper);
+
+            if (students.size() == 0) {
+                // 如果人数为0，那就不用排了
+                continue;
+            }
 
             if (students.size() > classroom.getClassroomSize()) {
                 // 如果人数大于考场容量，那就跳过这个考场
@@ -218,7 +230,7 @@ public class SchoolManagerController extends BaseController {
             // 创建安排表对象
             SchoolManager schoolManager = new SchoolManager();
             // 把开始日期变回data类型
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date formateDate = new Date();
             try {
                 formateDate = sdf.parse(startDateTime);
