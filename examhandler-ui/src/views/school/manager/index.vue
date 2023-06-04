@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="考场号" prop="managerSid">
-        <el-input
-          v-model="queryParams.managerSid"
-          placeholder="请输入准考证号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="考场校区" prop="managerRegion">
         <el-input
           v-model="queryParams.managerRegion"

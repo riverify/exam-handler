@@ -2,6 +2,7 @@ package com.riverify.web.controller.school;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -10,13 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.riverify.common.utils.DateUtils;
 import com.riverify.school.domain.SchoolClassroom;
 import com.riverify.school.domain.SchoolStudent;
 
 import com.riverify.school.service.ISchoolClassroomService;
 import com.riverify.school.domain.ManageForm;
 import com.riverify.school.service.ISchoolStudentService;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -151,6 +152,7 @@ public class SchoolManagerController extends BaseController {
         String end = startend[1];
         // 获取日期
         Date date = manageForm.getDate();
+        Integer relax = manageForm.getRelax();
         // 替换日期中的时间，改成开始时间和结束时间
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String startDateTime = sdf.format(date) + " " + start;
@@ -190,6 +192,8 @@ public class SchoolManagerController extends BaseController {
         // 遍历考场，把每个考场带入安排表，寻找非冲突的考场
         for (SchoolClassroom classroom : classrooms) {
 
+            startDateTime = sdf.format(date) + " " + start;
+
             studentQueryWrapper.eq(SchoolStudent::getStudentCampus, classroom.getClassroomCampus());
 
             // 查询这一批的学生人数
@@ -214,16 +218,36 @@ public class SchoolManagerController extends BaseController {
             managerQueryWrapper.eq(SchoolManager::getManagerClassroom, classroom.getClassroomNumber());
             List<SchoolManager> schoolManagers = schoolManagerService.list(managerQueryWrapper);
             // 遍历安排，把每个安排带入判断
+            loop1:
             for (SchoolManager schoolManager : schoolManagers) {
-                // 获取安排的开始结束时间
-                String managerStart = String.valueOf(schoolManager.getManagerStartdate());
-                // 把开始时间加上考试时长加上空闲时间
-                Date endDateTime1 = DateUtils.addMinutes(schoolManager.getManagerStartdate(), (int) (schoolManager.getManagerDuration() + manageForm.getRelax()));
-                String managerEnd = String.valueOf(endDateTime1);
+                Date managerStartdate = schoolManager.getManagerStartdate();
+                Date managerEnddate = DateUtils.addMinutes(managerStartdate, manageForm.getDuration());
+                managerEnddate = DateUtils.addMinutes(managerEnddate, relax);
 
-                // 如果有冲突，那就跳过这个考场
-                if (managerStart.compareTo(endDateTime) < 0 && managerEnd.compareTo(startDateTime) > 0) {
+                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String managerStartdateString = sdf2.format(managerStartdate);
+                String managerEnddateString = sdf2.format(managerEnddate);
+                // 如果开始时间在这个考场的开始时间和结束时间之间，那就冲突
+                while (startDateTime.compareTo(endDateTime) < 0) {
                     flag = true;
+
+                    // 如果安排中没有和开始结束时间冲突的，那就不冲突，跳出循环，开始排课
+                    if (startDateTime.compareTo(managerEnddateString) >= 0) {
+                        flag = false;
+                        break;
+                    }
+
+                    // 如果冲突，那就根据这场考试的relax中间休息时间判断下一时间段是否冲突
+                    // 把managerForm的开始时间延后考试和休息的分钟
+                    Date date1 = null;
+                    try {
+                        date1 = sdf2.parse(startDateTime);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    date1 = DateUtils.addMinutes(date1, relax);
+                    date1 = DateUtils.addMinutes(date1, Math.toIntExact(schoolManager.getManagerDuration()));
+                    startDateTime = sdf2.format(date1);
                 }
             }
 
