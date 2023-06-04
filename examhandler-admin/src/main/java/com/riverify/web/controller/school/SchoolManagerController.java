@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletResponse;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.riverify.common.utils.DateUtils;
 import com.riverify.school.domain.SchoolClassroom;
 import com.riverify.school.domain.SchoolStudent;
@@ -114,7 +115,26 @@ public class SchoolManagerController extends BaseController {
 //    @PreAuthorize("@ss.hasPermi('school:manager:remove')")
     @Log(title = "考场安排", businessType = BusinessType.DELETE)
     @DeleteMapping("/{managerIds}")
+    @Transactional
     public AjaxResult remove(@PathVariable Long[] managerIds) {
+        // 根据managerIds获取考场安排信息
+        for (Long managerId : managerIds) {
+            SchoolManager schoolManager = schoolManagerService.selectSchoolManagerByManagerId(managerId);
+            // 获取考场id
+            Long sid = Long.valueOf(schoolManager.getManagerSid());
+            // 删除考场安排，同时使学生表中的考场id置空
+            LambdaQueryWrapper<SchoolStudent> studentQueryWrapper = new LambdaQueryWrapper<>();
+            studentQueryWrapper.eq(SchoolStudent::getStudentManagerid, sid);
+            // 获取学生列表
+            List<SchoolStudent> studentList = schoolStudentService.list(studentQueryWrapper);
+            // 遍历学生列表
+            for (SchoolStudent schoolStudent : studentList) {
+                LambdaUpdateWrapper<SchoolStudent> studentUpdateWrapper = new LambdaUpdateWrapper<>();
+                studentUpdateWrapper.eq(SchoolStudent::getStudentManagerid, schoolStudent.getStudentManagerid());
+                studentUpdateWrapper.set(SchoolStudent::getStudentManagerid, 0L);
+                schoolStudentService.update(studentUpdateWrapper);
+            }
+        }
         return toAjax(schoolManagerService.deleteSchoolManagerByManagerIds(managerIds));
     }
 
