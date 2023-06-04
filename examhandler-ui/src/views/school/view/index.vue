@@ -87,7 +87,6 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['school:view:add']"
         >新增
         </el-button>
       </el-col>
@@ -99,7 +98,6 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['school:view:edit']"
         >修改
         </el-button>
       </el-col>
@@ -111,7 +109,6 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['school:view:remove']"
         >删除
         </el-button>
       </el-col>
@@ -122,7 +119,6 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['school:view:export']"
         >导出
         </el-button>
       </el-col>

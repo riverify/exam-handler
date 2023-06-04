@@ -76,7 +76,6 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['school:manager:add']"
         >新增
         </el-button>
       </el-col>
@@ -88,7 +87,6 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['school:manager:edit']"
         >修改
         </el-button>
       </el-col>
@@ -100,7 +98,6 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['school:manager:remove']"
         >删除
         </el-button>
       </el-col>
@@ -111,7 +108,6 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['school:manager:export']"
         >导出
         </el-button>
       </el-col>
@@ -120,15 +116,15 @@
 
     <el-table v-loading="loading" :data="managerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="考场编号" align="center" prop="managerId"/>
-      <el-table-column label="考场号" align="center" prop="managerSid"/>
+      <!--      <el-table-column label="考场编号" align="center" prop="managerId"/>-->
+      <!--      <el-table-column label="考场号" align="center" prop="managerSid"/>-->
       <el-table-column label="考场校区" align="center" prop="managerRegion"/>
       <el-table-column label="考场教室" align="center" prop="managerClassroom"/>
       <el-table-column label="考试人数" align="center" prop="managerStudents"/>
       <el-table-column label="开考时间" align="center" prop="managerStartdate"/>
       <el-table-column label="考试时长" align="center" prop="managerDuration"/>
       <el-table-column label="考试课程" align="center" prop="managerSubject"/>
-      <el-table-column label="学科类型" align="center" prop="managerType"/>
+      <!--      <el-table-column label="学科类型" align="center" prop="managerType"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -136,7 +132,6 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['school:manager:edit']"
           >修改
           </el-button>
           <el-button
@@ -144,7 +139,6 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['school:manager:remove']"
           >删除
           </el-button>
         </template>
@@ -162,12 +156,12 @@
     <!-- 添加或修改考场安排对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="考场号" prop="managerSid">
-          <el-input v-model="form.managerSid" placeholder="请输入准考证号"/>
-        </el-form-item>
-        <el-form-item label="考场校区" prop="managerRegion">
-          <el-input v-model="form.managerRegion" placeholder="请输入考场校区"/>
-        </el-form-item>
+        <!--        <el-form-item label="考场号" prop="managerSid">-->
+        <!--          <el-input v-model="form.managerSid" placeholder="请输入准考证号"/>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="考场校区" prop="managerRegion">-->
+        <!--          <el-input v-model="form.managerRegion" placeholder="请输入考场校区"/>-->
+        <!--        </el-form-item>-->
         <el-form-item label="考场教室" prop="managerClassroom">
           <el-input v-model="form.managerClassroom" placeholder="请输入考场教室"/>
         </el-form-item>

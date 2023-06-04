@@ -1,4 +1,4 @@
-<template style="width: 60%">
+<template>
   <div>
     <el-form ref="elForm" :model="formData" :rules="rules" size="medium" label-width="100px">
       <el-form-item label="考试日期" prop="date">
@@ -99,7 +99,7 @@
           manage(this.formData).then(response => {
             // 表单提交成功
             console.log(response.data);
-            // 执行其他操作，如显示成功消息或重定向到其他页面
+            this.$modal.msgSuccess("安排成功");
           }).catch(error => {
             // 处理错误情况
             console.error(error);
@@ -136,4 +136,8 @@
   }
 </script>
 <style>
+  .el-form {
+    width: 35%; /* 限制表单宽度为600px */
+    margin: 30px auto; /* 居中 */
+  }
 </style>
