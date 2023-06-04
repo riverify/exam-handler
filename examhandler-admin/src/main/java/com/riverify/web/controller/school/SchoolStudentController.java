@@ -26,9 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 学生信息Controller
- * 
+ *
  * @author riverify
- * @date 2023-03-24
+ * @date 2023-05-10
  */
 @RestController
 @RequestMapping("/school/student")
@@ -40,7 +40,7 @@ public class SchoolStudentController extends BaseController
     /**
      * 查询学生信息列表
      */
-    @PreAuthorize("@ss.hasPermi('school:student:list')")
+//    @PreAuthorize("@ss.hasPermi('school:student:list')")
     @GetMapping("/list")
     public TableDataInfo list(SchoolStudent schoolStudent)
     {
@@ -52,7 +52,7 @@ public class SchoolStudentController extends BaseController
     /**
      * 导出学生信息列表
      */
-    @PreAuthorize("@ss.hasPermi('school:student:export')")
+//    @PreAuthorize("@ss.hasPermi('school:student:export')")
     @Log(title = "学生信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SchoolStudent schoolStudent) {
@@ -62,43 +62,44 @@ public class SchoolStudentController extends BaseController
     }
 
     /**
-     * 导入学生信息列表
+     * 导入学生信息数据
      */
-    @PreAuthorize("@ss.hasPermi('system:user:import')")
     @Log(title = "学生信息", businessType = BusinessType.IMPORT)
-    @PostMapping("/import")
+//    @PreAuthorize("@ss.hasPermi('system:user:import')")
+    @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelUtil<SchoolStudent> util = new ExcelUtil<SchoolStudent>(SchoolStudent.class);
-        List<SchoolStudent> userList = util.importExcel(file.getInputStream());
+        List<SchoolStudent> studentList = util.importExcel(file.getInputStream());
         String operName = getUsername();
-        String message = schoolStudentService.importSchoolStudent(userList, updateSupport, operName);
+        String message = schoolStudentService.importStudent(studentList, updateSupport, operName);
         return success(message);
     }
 
     /**
      * 获取学生信息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('school:student:query')")
-    @GetMapping(value = "/{studentId}")
-    public AjaxResult getInfo(@PathVariable("studentId") String studentId) {
-        return success(schoolStudentService.selectSchoolStudentByStudentId(studentId));
+//    @PreAuthorize("@ss.hasPermi('school:student:query')")
+    @GetMapping(value = "/{sid}")
+    public AjaxResult getInfo(@PathVariable("sid") Long sid) {
+        return success(schoolStudentService.selectSchoolStudentBySid(sid));
     }
 
     /**
      * 新增学生信息
      */
-    @PreAuthorize("@ss.hasPermi('school:student:add')")
+//    @PreAuthorize("@ss.hasPermi('school:student:add')")
     @Log(title = "学生信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SchoolStudent schoolStudent)
     {
+        schoolStudent.setStudentManagerid(0L);
         return toAjax(schoolStudentService.insertSchoolStudent(schoolStudent));
     }
 
     /**
      * 修改学生信息
      */
-    @PreAuthorize("@ss.hasPermi('school:student:edit')")
+//    @PreAuthorize("@ss.hasPermi('school:student:edit')")
     @Log(title = "学生信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SchoolStudent schoolStudent)
@@ -109,11 +110,25 @@ public class SchoolStudentController extends BaseController
     /**
      * 删除学生信息
      */
-    @PreAuthorize("@ss.hasPermi('school:student:remove')")
+//    @PreAuthorize("@ss.hasPermi('school:student:remove')")
     @Log(title = "学生信息", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{studentIds}")
-    public AjaxResult remove(@PathVariable String[] studentIds)
-    {
-        return toAjax(schoolStudentService.deleteSchoolStudentByStudentIds(studentIds));
+    @DeleteMapping("/{sids}")
+    public AjaxResult remove(@PathVariable Long[] sids) {
+        return toAjax(schoolStudentService.deleteSchoolStudentBySids(sids));
+    }
+
+
+    /**
+     * 更新学生状态
+     */
+    @PutMapping("/status/{sid}/{status}")
+    public AjaxResult status(@PathVariable Long sid, @PathVariable String status) {
+        return toAjax(schoolStudentService.updateSchoolStudentStatus(sid, status));
+    }
+
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) {
+        ExcelUtil<SchoolStudent> util = new ExcelUtil<SchoolStudent>(SchoolStudent.class);
+        util.importTemplateExcel(response, "学生信息");
     }
 }

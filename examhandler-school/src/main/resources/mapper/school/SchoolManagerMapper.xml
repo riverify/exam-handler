@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.riverify.school.mapper.SchoolManagerMapper">
+
+    <resultMap type="SchoolManager" id="SchoolManagerResult">
+        <result property="managerId" column="manager_id"/>
+        <result property="managerSid" column="manager_sid"/>
+        <result property="managerRegion" column="manager_region"/>
+        <result property="managerClassroom" column="manager_classroom"/>
+        <result property="managerStudents" column="manager_students"/>
+        <result property="managerStartdate" column="manager_startdate"/>
+        <result property="managerDuration" column="manager_duration"/>
+        <result property="managerSubject" column="manager_subject"/>
+        <result property="managerType" column="manager_type"/>
+    </resultMap>
+
+    <sql id="selectSchoolManagerVo">
+        select manager_id,
+               manager_sid,
+               manager_region,
+               manager_classroom,
+               manager_students,
+               manager_startdate,
+               manager_duration,
+               manager_subject,
+               manager_type
+        from school_manager
+    </sql>
+
+    <select id="selectSchoolManagerList" parameterType="SchoolManager" resultMap="SchoolManagerResult">
+        <include refid="selectSchoolManagerVo"/>
+        <where>
+            <if test="managerSid != null  and managerSid != ''">and manager_sid like concat('%', #{managerSid}, '%')
+            </if>
+            <if test="managerRegion != null  and managerRegion != ''">and manager_region like concat('%',
+                #{managerRegion}, '%')
+            </if>
+            <if test="managerClassroom != null  and managerClassroom != ''">and manager_classroom like concat('%',
+                #{managerClassroom}, '%')
+            </if>
+            <if test="managerStudents != null ">and manager_students like concat('%', #{managerStudents}, '%')</if>
+            <if test="managerStartdate != null ">and manager_startdate like concat('%', #{managerStartdate}, '%')</if>
+            <if test="managerDuration != null ">and manager_duration like concat('%', #{managerDuration}, '%')</if>
+            <if test="managerSubject != null  and managerSubject != ''">and manager_subject like concat('%',
+                #{managerSubject}, '%')
+            </if>
+            <if test="managerType != null  and managerType != ''">and manager_type like concat('%', #{managerType},
+                '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSchoolManagerByManagerId" parameterType="Long" resultMap="SchoolManagerResult">
+        <include refid="selectSchoolManagerVo"/>
+        where manager_id = #{managerId}
+    </select>
+
+    <insert id="insertSchoolManager" parameterType="SchoolManager" useGeneratedKeys="true" keyProperty="managerId">
+        insert into school_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="managerSid != null">manager_sid,</if>
+            <if test="managerRegion != null">manager_region,</if>
+            <if test="managerClassroom != null">manager_classroom,</if>
+            <if test="managerStudents != null">manager_students,</if>
+            <if test="managerStartdate != null">manager_startdate,</if>
+            <if test="managerDuration != null">manager_duration,</if>
+            <if test="managerSubject != null">manager_subject,</if>
+            <if test="managerType != null">manager_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="managerSid != null">#{managerSid},</if>
+            <if test="managerRegion != null">#{managerRegion},</if>
+            <if test="managerClassroom != null">#{managerClassroom},</if>
+            <if test="managerStudents != null">#{managerStudents},</if>
+            <if test="managerStartdate != null">#{managerStartdate},</if>
+            <if test="managerDuration != null">#{managerDuration},</if>
+            <if test="managerSubject != null">#{managerSubject},</if>
+            <if test="managerType != null">#{managerType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSchoolManager" parameterType="SchoolManager">
+        update school_manager
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="managerSid != null">manager_sid = #{managerSid},</if>
+            <if test="managerRegion != null">manager_region = #{managerRegion},</if>
+            <if test="managerClassroom != null">manager_classroom = #{managerClassroom},</if>
+            <if test="managerStudents != null">manager_students = #{managerStudents},</if>
+            <if test="managerStartdate != null">manager_startdate = #{managerStartdate},</if>
+            <if test="managerDuration != null">manager_duration = #{managerDuration},</if>
+            <if test="managerSubject != null">manager_subject = #{managerSubject},</if>
+            <if test="managerType != null">manager_type = #{managerType},</if>
+        </trim>
+        where manager_id = #{managerId}
+    </update>
+
+    <delete id="deleteSchoolManagerByManagerId" parameterType="Long">
+        delete
+        from school_manager
+        where manager_id = #{managerId}
+    </delete>
+
+    <delete id="deleteSchoolManagerByManagerIds" parameterType="String">
+        delete from school_manager where manager_id in
+        <foreach item="managerId" collection="array" open="(" separator="," close=")">
+            #{managerId}
+        </foreach>
+    </delete>
+</mapper>

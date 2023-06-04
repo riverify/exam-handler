@@ -84,9 +84,14 @@ export const constantRoutes = [
         path: 'profile',
         component: () => import('@/views/system/user/profile/index'),
         name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
+        meta: {title: '个人中心', icon: 'user'}
       }
     ]
+  },
+  {
+    path: '/school/manager/manage',
+    name: 'Manage',
+    component: () => import('@/views/school/manager/manage.vue'),// 按您的实际组件路径导入
   }
 ]
 
@@ -158,10 +163,11 @@ export const dynamicRoutes = [
         path: 'index/:tableId(\\d+)',
         component: () => import('@/views/tool/gen/editTable'),
         name: 'GenEdit',
-        meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
+        meta: {title: '修改生成配置', activeMenu: '/tool/gen'}
       }
     ]
-  }
+  },
+
 ]
 
 // 防止连续点击多次路由报错
