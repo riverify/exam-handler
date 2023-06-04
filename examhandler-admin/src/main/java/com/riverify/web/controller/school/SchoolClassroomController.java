@@ -47,7 +47,7 @@ public class SchoolClassroomController extends BaseController {
     /**
      * 导出考场列表
      */
-    @PreAuthorize("@ss.hasPermi('school:classroom:export')")
+//    @PreAuthorize("@ss.hasPermi('school:classroom:export')")
     @Log(title = "考场", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SchoolClassroom schoolClassroom) {
@@ -59,7 +59,7 @@ public class SchoolClassroomController extends BaseController {
     /**
      * 获取考场详细信息
      */
-    @PreAuthorize("@ss.hasPermi('school:classroom:query')")
+//    @PreAuthorize("@ss.hasPermi('school:classroom:query')")
     @GetMapping(value = "/{columnId}")
     public AjaxResult getInfo(@PathVariable("columnId") Long columnId) {
         return success(schoolClassroomService.selectSchoolClassroomByColumnId(columnId));
@@ -68,7 +68,7 @@ public class SchoolClassroomController extends BaseController {
     /**
      * 新增考场
      */
-    @PreAuthorize("@ss.hasPermi('school:classroom:add')")
+//    @PreAuthorize("@ss.hasPermi('school:classroom:add')")
     @Log(title = "考场", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SchoolClassroom schoolClassroom) {
@@ -78,7 +78,7 @@ public class SchoolClassroomController extends BaseController {
     /**
      * 修改考场
      */
-    @PreAuthorize("@ss.hasPermi('school:classroom:edit')")
+//    @PreAuthorize("@ss.hasPermi('school:classroom:edit')")
     @Log(title = "考场", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SchoolClassroom schoolClassroom) {
@@ -88,7 +88,7 @@ public class SchoolClassroomController extends BaseController {
     /**
      * 删除考场
      */
-    @PreAuthorize("@ss.hasPermi('school:classroom:remove')")
+//    @PreAuthorize("@ss.hasPermi('school:classroom:remove')")
     @Log(title = "考场", businessType = BusinessType.DELETE)
     @DeleteMapping("/{columnIds}")
     public AjaxResult remove(@PathVariable Long[] columnIds) {

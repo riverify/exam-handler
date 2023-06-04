@@ -37,7 +37,7 @@ public class ViewStudentManagerController extends BaseController {
     /**
      * 查询view列表
      */
-    @PreAuthorize("@ss.hasPermi('school:view:list')")
+//    @PreAuthorize("@ss.hasPermi('school:view:list')")
     @GetMapping("/list")
     public TableDataInfo list(ViewStudentManager viewStudentManager) {
         startPage();
@@ -48,7 +48,7 @@ public class ViewStudentManagerController extends BaseController {
     /**
      * 导出view列表
      */
-    @PreAuthorize("@ss.hasPermi('school:view:export')")
+//    @PreAuthorize("@ss.hasPermi('school:view:export')")
     @Log(title = "view", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ViewStudentManager viewStudentManager) {
@@ -60,7 +60,7 @@ public class ViewStudentManagerController extends BaseController {
     /**
      * 获取view详细信息
      */
-    @PreAuthorize("@ss.hasPermi('school:view:query')")
+//    @PreAuthorize("@ss.hasPermi('school:view:query')")
     @GetMapping(value = "/{studentId}")
     public AjaxResult getInfo(@PathVariable("studentId") String studentId) {
         return success(viewStudentManagerService.selectViewStudentManagerByStudentId(studentId));
@@ -69,7 +69,7 @@ public class ViewStudentManagerController extends BaseController {
     /**
      * 新增view
      */
-    @PreAuthorize("@ss.hasPermi('school:view:add')")
+//    @PreAuthorize("@ss.hasPermi('school:view:add')")
     @Log(title = "view", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ViewStudentManager viewStudentManager) {
@@ -79,7 +79,7 @@ public class ViewStudentManagerController extends BaseController {
     /**
      * 修改view
      */
-    @PreAuthorize("@ss.hasPermi('school:view:edit')")
+//    @PreAuthorize("@ss.hasPermi('school:view:edit')")
     @Log(title = "view", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ViewStudentManager viewStudentManager) {
@@ -89,7 +89,7 @@ public class ViewStudentManagerController extends BaseController {
     /**
      * 删除view
      */
-    @PreAuthorize("@ss.hasPermi('school:view:remove')")
+//    @PreAuthorize("@ss.hasPermi('school:view:remove')")
     @Log(title = "view", businessType = BusinessType.DELETE)
     @DeleteMapping("/{studentIds}")
     public AjaxResult remove(@PathVariable String[] studentIds) {
