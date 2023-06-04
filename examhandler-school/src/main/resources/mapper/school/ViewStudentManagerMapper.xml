@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.riverify.school.mapper.ViewStudentManagerMapper">
+
+    <resultMap type="ViewStudentManager" id="ViewStudentManagerResult">
+        <result property="studentId" column="student_id"/>
+        <result property="studentName" column="student_name"/>
+        <result property="studentMajor" column="student_major"/>
+        <result property="studentClassname" column="student_classname"/>
+        <result property="studentTeacher" column="student_teacher"/>
+        <result property="managerRegion" column="manager_region"/>
+        <result property="managerClassroom" column="manager_classroom"/>
+        <result property="managerStartdate" column="manager_startdate"/>
+        <result property="managerDuration" column="manager_duration"/>
+    </resultMap>
+
+    <sql id="selectViewStudentManagerVo">
+        select student_id,
+               student_name,
+               student_major,
+               student_classname,
+               student_teacher,
+               manager_region,
+               manager_classroom,
+               manager_startdate,
+               manager_duration
+        from view_student_manager
+    </sql>
+
+    <select id="selectViewStudentManagerList" parameterType="ViewStudentManager" resultMap="ViewStudentManagerResult">
+        <include refid="selectViewStudentManagerVo"/>
+        <where>
+            <if test="studentId != null  and studentId != ''">and student_id like concat('%', #{studentId}, '%')</if>
+            <if test="studentName != null  and studentName != ''">and student_name like concat('%', #{studentName},
+                '%')
+            </if>
+            <if test="studentMajor != null  and studentMajor != ''">and student_major like concat('%', #{studentMajor},
+                '%')
+            </if>
+            <if test="studentClassname != null  and studentClassname != ''">and student_classname like concat('%',
+                #{studentClassname}, '%')
+            </if>
+            <if test="studentTeacher != null  and studentTeacher != ''">and student_teacher like concat('%',
+                #{studentTeacher}, '%')
+            </if>
+            <if test="managerRegion != null  and managerRegion != ''">and manager_region like concat('%',
+                #{managerRegion}, '%')
+            </if>
+            <if test="managerClassroom != null  and managerClassroom != ''">and manager_classroom like concat('%',
+                #{managerClassroom}, '%')
+            </if>
+            <if test="managerStartdate != null ">and manager_startdate = #{managerStartdate}</if>
+            <if test="managerDuration != null ">and manager_duration = #{managerDuration}</if>
+        </where>
+    </select>
+
+    <select id="selectViewStudentManagerByStudentId" parameterType="String" resultMap="ViewStudentManagerResult">
+        <include refid="selectViewStudentManagerVo"/>
+        where student_id = #{studentId}
+    </select>
+
+    <insert id="insertViewStudentManager" parameterType="ViewStudentManager">
+        insert into view_student_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="studentMajor != null">student_major,</if>
+            <if test="studentClassname != null">student_classname,</if>
+            <if test="studentTeacher != null">student_teacher,</if>
+            <if test="managerRegion != null">manager_region,</if>
+            <if test="managerClassroom != null">manager_classroom,</if>
+            <if test="managerStartdate != null">manager_startdate,</if>
+            <if test="managerDuration != null">manager_duration,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="studentMajor != null">#{studentMajor},</if>
+            <if test="studentClassname != null">#{studentClassname},</if>
+            <if test="studentTeacher != null">#{studentTeacher},</if>
+            <if test="managerRegion != null">#{managerRegion},</if>
+            <if test="managerClassroom != null">#{managerClassroom},</if>
+            <if test="managerStartdate != null">#{managerStartdate},</if>
+            <if test="managerDuration != null">#{managerDuration},</if>
+        </trim>
+    </insert>
+
+    <update id="updateViewStudentManager" parameterType="ViewStudentManager">
+        update view_student_manager
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="studentMajor != null">student_major = #{studentMajor},</if>
+            <if test="studentClassname != null">student_classname = #{studentClassname},</if>
+            <if test="studentTeacher != null">student_teacher = #{studentTeacher},</if>
+            <if test="managerRegion != null">manager_region = #{managerRegion},</if>
+            <if test="managerClassroom != null">manager_classroom = #{managerClassroom},</if>
+            <if test="managerStartdate != null">manager_startdate = #{managerStartdate},</if>
+            <if test="managerDuration != null">manager_duration = #{managerDuration},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteViewStudentManagerByStudentId" parameterType="String">
+        delete
+        from view_student_manager
+        where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteViewStudentManagerByStudentIds" parameterType="String">
+        delete from view_student_manager where student_id in
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+</mapper>
